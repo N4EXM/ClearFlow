@@ -11,6 +11,10 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import LoadingPage from './pages/LoadingPage'
 import Home from './pages/Home'
+import Project from './pages/Project'
+import EditProject from './pages/EditProject'
+import CalendarPage from './pages/CalendarPage'
+import Navbar from './components/navbar'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 function App() {
@@ -24,23 +28,47 @@ function App() {
   }, [])
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route
-          path={"/"}
-          index
-          element={
-            loading 
-            ? <Home
-                loading={loading}
-              /> 
-            : <LoadingPage/>}
+    <div
+      className='relative'
+    >
+      <BrowserRouter>
+        <Routes>
+          <Route
+            path={"/"}
+            index
+            element={
+              loading 
+              ? <Home
+                  loading={loading}
+                /> 
+              : <LoadingPage/>}
+          />
+          <Route
+            path={"/newProject"}
+            element={
+              loading
+              ? <Project/>
+              : <LoadingPage/>
+            }
+          />
+          <Route
+            path={'/CalendarPage'}
+            element={
+              loading
+              ? <CalendarPage/>
+              : <LoadingPage/>
+            }
+          />
+          <Route
+          
+          />
+        </Routes>        
+        <Navbar
+          loading={loading}
         />
-        <Route/>
-        <Route/>
-        <Route/>
-      </Routes>
-    </BrowserRouter>
+        <CircularProgressBar/>
+      </BrowserRouter>
+    </div>
   )
 }
 
