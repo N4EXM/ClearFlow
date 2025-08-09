@@ -17,7 +17,7 @@ const CircularProgressBar = ({ progress, size = 100, strokeWidth = 10 }) => {
           cy={size / 2}
           r={radius}
           fill="none"
-          stroke="#ddd"
+          stroke="#0f172a"
           strokeWidth={strokeWidth}
         />
         {/* Progress circle */}
@@ -25,12 +25,12 @@ const CircularProgressBar = ({ progress, size = 100, strokeWidth = 10 }) => {
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          fill="none"
-          stroke="#4CAF50"
+          fill="#0f172a"
+          stroke="#34d399"
           strokeWidth={strokeWidth}
           strokeDasharray={circumference}
           strokeDashoffset={strokeDashoffset}
-          strokeLinecap="round"
+          strokeLinecap=""
           transform={`rotate(-90 ${size / 2} ${size / 2})`}
         />
       </svg>
@@ -42,7 +42,7 @@ const CircularProgressBar = ({ progress, size = 100, strokeWidth = 10 }) => {
         transform: 'translate(-50%, -50%)',
         fontSize: size * 0.25,
         fontWeight: 'bold',
-        color: '#333'
+        color: '#ffffff'
       }}>
         {progress}%
       </div>

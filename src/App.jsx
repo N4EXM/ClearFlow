@@ -14,7 +14,7 @@ import Home from './pages/Home'
 import Project from './pages/Project'
 import EditProject from './pages/EditProject'
 import CalendarPage from './pages/CalendarPage'
-import Navbar from './components/navbar'
+import Navbar from './components/Navbar'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 function App() {
@@ -29,7 +29,7 @@ function App() {
 
   return (
     <div
-      className='relative'
+      className='relative '
     >
       <BrowserRouter>
         <Routes>
@@ -66,7 +66,6 @@ function App() {
         <Navbar
           loading={loading}
         />
-        <CircularProgressBar/>
       </BrowserRouter>
     </div>
   )
