@@ -55,7 +55,9 @@ function App() {
             path={'/CalendarPage'}
             element={
               loading
-              ? <CalendarPage/>
+              ? <CalendarPage
+                  loading={loading}
+                />
               : <LoadingPage/>
             }
           />
