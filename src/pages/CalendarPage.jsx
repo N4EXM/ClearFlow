@@ -7,6 +7,15 @@ const CalendarPage = ({loading}) => {
 
     const [error, setError] = useState("")
 
+    const now = new Date() // get the current date
+    const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1) // get the next month
+    const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1) // get the previous month
+    const lastDayOfMonth = new Date(nextMonth - 1) 
+    const daysInMonth = lastDayOfMonth.getDate()
+
+    const [currentMonth, setCurrentMonth] = useState(0)
+    const [currentDay,setCurrentDay] = useState
+
   return (
     <div
       className='flex flex-col bg-Pr min-h-screen h-full w-full text-CText duration-200 relative font-poppins'
