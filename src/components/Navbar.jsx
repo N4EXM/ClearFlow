@@ -7,7 +7,7 @@ const Navbar = ({loading}) => {
 
   return (
     <div
-        className={`duration-200 opacity-0 ${loading && "opacity-100"} pb-6 w-full bg-BGS p-4 px-10 flex flex-row items-center justify-between text-white fixed bottom-0 left-0 border-t-2 border-Pr`}
+        className={`duration-200 opacity-0 ${loading && "opacity-100"} pb-6 w-full bg-BGS p-4 px-10 flex flex-row items-center justify-between text-white fixed bottom-0 left-0 border-t-2 border-separator`}
     >
         <Link
             to={"/"}

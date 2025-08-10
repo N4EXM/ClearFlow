@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import CalendarBtn from '../components/CalendarBtn'
 import NewTaskCard from '../components/NewTaskCard'
+import TaskCard from '../components/TaskCard'
 
 const CalendarPage = ({loading}) => {
 
@@ -56,6 +57,7 @@ const CalendarPage = ({loading}) => {
           className='flex flex-col w-full h-fit gap-2'
         >
 
+          {/* selected date and add new task btn */}
           <div
             className='flex flex-row justify-between pr-2'
           >
@@ -82,18 +84,34 @@ const CalendarPage = ({loading}) => {
             </button>
 
           </div>
-            <span className='w-full bg-separator h-[0.75px]'></span>
+          <span className='w-full bg-separator h-[0.75px]'></span>
+
+          {/* current tasks */}
+          <div
+            className='flex flex-col gap-3 w-full h-full pt-3'
+          >
 
             <div
-              className='flex flex-col gap-3 w-full h-full pt-3'
+              className='flex flex-row items-start justify-start gap-2'
             >
-              <div
-                className='flex flex-row items-start justify-start gap-2'
-              >
               <span
                 className='p-1 rounded-full border border-Pr min-w-6 text-[0.6rem] h-fit flex items-center bg-BGS font-medium justify-center mt-2'
               >
                 1
+              </span>
+              <TaskCard
+                title={"Fix the Auth system"}
+                description={"Fix the login function, the logout function, the Register function and the check-auth function."}
+              /> 
+            </div>
+
+            <div
+              className='flex flex-row items-start justify-start gap-2'
+            >
+              <span
+              className='p-1 rounded-full border border-Pr min-w-6 text-[0.6rem] h-fit flex items-center bg-BGS font-medium justify-center mt-2'
+            >
+                2
               </span>
               <NewTaskCard/>
             
