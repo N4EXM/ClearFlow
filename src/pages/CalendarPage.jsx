@@ -19,14 +19,35 @@ const CalendarPage = ({loading}) => {
       </p>
 
       <div
-        className='bg-BG p-7 rounded-tr-[2.5rem] flex flex-col gap-8 w-full min-h-screen pb-32'
+        className='bg-BG p-7 rounded-tr-[2.5rem] flex flex-col gap-8 w-full min-h-[80vh] h-full'
       >
         
-        <p
-          className='font-semibold text-lg'
+        <div
+          className='flex flex-row items-center justify-between w-full'
         >
-          August 2025
-        </p>
+          <p
+            className='font-semibold text-lg'
+          >
+            August 2025
+          </p>
+          <div
+            className='flex flex-row items-center gap-3'
+          >
+            <button>
+              <svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
+                fill="currentColor" viewBox="0 0 24 24" >
+                <path d="M14.29 6.29 8.59 12l5.7 5.71 1.42-1.42-4.3-4.29 4.3-4.29z"></path>
+              </svg>
+            </button>
+            <button>
+              <svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
+                fill="currentColor" viewBox="0 0 24 24" >
+                <path d="m9.71 17.71 5.7-5.71-5.7-5.71-1.42 1.42 4.3 4.29-4.3 4.29z"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+        
 
         <div
           className='flex-row flex gap-3 overflow-x-scroll no-scrollbar'

@@ -3,7 +3,7 @@ import React from 'react'
 const NewTaskCard = () => {
   return (
     <div
-        className='w-full min-h-24 bg-BGS rounded-md px-4 py-4 pt-3 flex flex-col justify-between'
+        className='w-full min-h-24 h-full bg-BGS rounded-md px-4 py-4 pt-3 flex flex-col justify-between'
     >
         
         <div
@@ -17,8 +17,8 @@ const NewTaskCard = () => {
             <textarea 
                 type="text"
                 placeholder='Task description...'
-                className='w-56 min-h-10 h-full resize-none no-scrollbar outline-none text-xs font-medium placeholder:text-DText'
-                maxLength={130}
+                className='w-56 min-h-12 h-full resize-none no-scrollbar outline-none text-xs font-medium placeholder:text-DText'
+                maxLength={100}
             ></textarea>
         </div>
 
