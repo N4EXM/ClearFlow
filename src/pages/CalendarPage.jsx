@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { getCurrentMonth, getCurrentYear, getDaysInMonth } from '../utils/dateUtils'
 import CalendarBtn from '../components/CalendarBtn'
 import NewTaskCard from '../components/NewTaskCard'
 import TaskCard from '../components/TaskCard'
@@ -7,14 +8,56 @@ const CalendarPage = ({loading}) => {
 
     const [error, setError] = useState("")
 
-    const now = new Date() // get the current date
-    const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1) // get the next month
-    const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1) // get the previous month
-    const lastDayOfMonth = new Date(nextMonth - 1) 
-    const daysInMonth = lastDayOfMonth.getDate()
-
-    const [currentMonth, setCurrentMonth] = useState(0)
-    const [currentDay,setCurrentDay] = useState
+    const months = [
+      {
+        fullName: "January",
+        abrName: "Jan"
+      },
+      {
+        fullName: "February",
+        abrName: "Feb"
+      },
+      {
+        fullName: "March",
+        abrName: "Mar"
+      },
+            {
+        fullName: "April",
+        abrName: "Apr"
+      },
+      {
+        fullName: "May",
+        abrName: "May"
+      },
+      {
+        fullName: "June",
+        abrName: "Jun"
+      },
+            {
+        fullName: "July",
+        abrName: "Jul"
+      },
+      {
+        fullName: "August",
+        abrName: "Aug"
+      },
+      {
+        fullName: "September",
+        abrName: "Sept"
+      },
+      {
+        fullName: "October",
+        abrName: "Oct"
+      },
+      {
+        fullName: "November",
+        abrName: "Nov"
+      },
+      {
+        fullName: "December",
+        abrName: "Dec"
+      },
+    ]
 
   return (
     <div
