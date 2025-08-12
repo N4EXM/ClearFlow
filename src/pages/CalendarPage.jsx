@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react'
-// import { useCurrentDateInfo } from '../hooks/useCurrentDateInfo'
+import React, { useEffect, useState, useRef } from 'react'
 import { getCurrentMonth, getCurrentDate, getCurrentDayInMonthIndex, getCurrentYear, getDaysInMonth } from '../utils/dateUtils'
 import CalendarBtn from '../components/CalendarBtn'
 import NewTaskCard from '../components/NewTaskCard'
@@ -60,7 +59,6 @@ const CalendarPage = ({loading}) => {
         abrName: "Dec"
       },
     ]
-
     const days = [
       {
         fullName: "Sunday",
@@ -91,43 +89,63 @@ const CalendarPage = ({loading}) => {
         abrName: "Sat"
       },
     ]
+    const today = getCurrentDate()
 
-    const [currentMonth, setCurrentMonth] = useState(getCurrentMonth()) // 0 - 12 months
-    const [currentYear, setCurrentYear] = useState(getCurrentYear()) // e.g current year: 2025
-    const [daysInMonth, setDaysInMonth] = useState(getDaysInMonth(currentYear, currentMonth))
-    const [currentDate, setCurrentDate] = useState(getCurrentDate())
-    const [currentDayIndex, setCurrentDayIndex] = useState(getCurrentDayInMonthIndex(currentYear, currentMonth , currentDate))
+    const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth()) // 0 - 12 months
+    const [selectedYear, setSelectedYear] = useState(getCurrentYear()) // e.g current year: 2025
+    const [daysInMonth, setDaysInMonth] = useState(getDaysInMonth(selectedYear, selectedMonth))
+    const [selectedDate, setSelectedDate] = useState(today)
+    const [selectedDayIndex, setSelectedDayIndex] = useState(getCurrentDayInMonthIndex(selectedYear, selectedMonth , selectedDate))
+
+    const scrollContainerRef = useRef(null);
+    const dateButtonRefs = useRef([]);
+
+    
+
+    // changes the days to the current month
+    useEffect(() => {
+      setSelectedDayIndex(getCurrentDayInMonthIndex(selectedYear, selectedMonth, selectedDate));
+    }, [selectedDate, selectedMonth, selectedYear]);
+
+    // slides automatically to the selected calendarBtn
+    useEffect(() => {
+        // Scroll to current date when month changes or component mounts
+      if (scrollContainerRef.current && dateButtonRefs.current[selectedDate - 1]) {
+        const container = scrollContainerRef.current;
+        const button = dateButtonRefs.current[selectedDate - 1];
+      
+        // Calculate scroll position
+        const containerWidth = container.offsetWidth;
+        const buttonLeft = button.offsetLeft;
+        const buttonWidth = button.offsetWidth;
+      
+        // Scroll to center the button
+        container.scrollTo({
+          left: buttonLeft - (containerWidth / 2) + (buttonWidth / 2),
+          behavior: 'smooth'
+        });
+      }
+    }, [selectedMonth, selectedDate]);
 
     // useEffect(() => {
-    //   console.log("current month: ",currentMonth)
-    //   console.log("current year: ",currentYear)
-    //   console.log("current days: ", daysInMonth)
-    //   console.log("current day selected: ", getCurrentDayInMonthIndex(currentYear, currentMonth, 28))
-    //   console.log("current date: ", getCurrentDate())
-    // },[])
-
-    useEffect(() => {
-      setDaysInMonth(getDaysInMonth(currentYear, currentMonth))
-    }, [currentMonth])
+    //   if (curr)
+    // }, [currentMonth])
 
     const handleMonthChange = (operation) => {
       if (operation === 1) {
-        setCurrentMonth(currentMonth + 1)
-
-        if (currentMonth > 10) {
-          setCurrentMonth(0)
-          setCurrentYear(currentYear + 1)
+        setSelectedMonth(selectedMonth + 1)
+        if (selectedMonth > 10) {
+          setSelectedMonth(0)
+          setSelectedYear(selectedYear + 1)
         }
       }
       else {
-        setCurrentMonth(currentMonth - 1)
-        if (currentMonth < 1) {
-          setCurrentYear(currentYear - 1)
-          setCurrentMonth(11)
+        setSelectedMonth(selectedMonth - 1)
+        if (selectedMonth < 1) {
+          setSelectedYear(selectedYear - 1)
+          setSelectedMonth(11)
         }
-      }
-      
-      
+      }      
     }
 
   return (
@@ -151,14 +169,14 @@ const CalendarPage = ({loading}) => {
           <p
             className='font-semibold text-lg'
           >
-            {months[currentMonth].fullName} {currentYear}
+            {months[selectedMonth].fullName} {selectedYear}
           </p>
           <div
             className='flex flex-row items-center gap-3'
           >
             <button
               onClick={() => handleMonthChange(2)}
-              className='p-1'
+              className='p-1 active:bg-Pr duration-200 rounded-full'
             >
               <svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
                 fill="currentColor" viewBox="0 0 24 24" >
@@ -167,7 +185,7 @@ const CalendarPage = ({loading}) => {
             </button>
             <button
               onClick={() => handleMonthChange(1)}
-              className='p-1'
+              className='p-1 active:bg-Pr duration-200 rounded-full'
             >
               <svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
                 fill="currentColor" viewBox="0 0 24 24" >
@@ -179,20 +197,23 @@ const CalendarPage = ({loading}) => {
         
         {/* calendar buttons */}
         <div
+          ref={scrollContainerRef}
           className='flex-row flex gap-3 overflow-x-scroll no-scrollbar'
         >
           {
             Array.from({ length: daysInMonth }, (_, index) => {
               
-              const date = new Date(currentYear, currentMonth, index + 1);
+              const date = new Date(selectedYear, selectedMonth, index + 1);
               const dayNameIndex = date.getDay(); // 0 (Sun) to 6 (Sat)
 
               return (
-              <CalendarBtn
-                key={index + 1}
-                day={days[dayNameIndex].abrName}
-                num={index + 1}
-              />
+                <CalendarBtn
+                  key={index + 1}
+                  ref={(el) => (dateButtonRefs.current[index] = el)}  
+                  day={days[dayNameIndex].abrName}
+                  selectedDate={selectedDate}
+                  num={index + 1}
+                />
               )
             })}
         </div>
@@ -212,12 +233,12 @@ const CalendarPage = ({loading}) => {
               <span
                 className='text-xs font-medium text-DText'
               >
-                {months[currentMonth].abrName} {currentDate} {currentYear}
+                {months[selectedMonth].abrName} {selectedDate} {selectedYear}
               </span>
               <p
                 className='font-medium'
               >
-                {days[currentDayIndex].fullName}
+                {days[selectedDayIndex].fullName}
               </p>
             </div>
             <button>

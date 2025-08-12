@@ -1,9 +1,11 @@
 import React from 'react'
 
-const CalendarBtn = ({day, num}) => {
-  return (
-    <div
-        className='min-w-14 flex flex-col p-3.5 py-3 gap-2 rounded-md items-center justify-center bg-BGS border border-Pr'
+const CalendarBtn = React.forwardRef(({ day, selectedDate, num }, ref) => {  
+    
+    return (
+    <button
+        ref={ref}
+        className={`${selectedDate === num ? "bg-Pr" : "bg-BGS"}  min-w-14 flex flex-col p-3.5 py-3 gap-2 rounded-md items-center justify-center border border-Pr`}
     >
         <p
             className='font-medium text-sm'
@@ -15,8 +17,8 @@ const CalendarBtn = ({day, num}) => {
         >
             {num}
         </p>
-    </div>
+    </button>
   )
-}
+})
 
 export default CalendarBtn
