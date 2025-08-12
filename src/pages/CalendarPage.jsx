@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 // import { useCurrentDateInfo } from '../hooks/useCurrentDateInfo'
-import { getCurrentMonth, getCurrentDate, getCurrentDayInMonth, getCurrentYear, getDaysInMonth } from '../utils/dateUtils'
+import { getCurrentMonth, getCurrentDate, getCurrentDayInMonthIndex, getCurrentYear, getDaysInMonth } from '../utils/dateUtils'
 import CalendarBtn from '../components/CalendarBtn'
 import NewTaskCard from '../components/NewTaskCard'
 import TaskCard from '../components/TaskCard'
@@ -95,14 +95,16 @@ const CalendarPage = ({loading}) => {
     const [currentMonth, setCurrentMonth] = useState(getCurrentMonth()) // 0 - 12 months
     const [currentYear, setCurrentYear] = useState(getCurrentYear()) // e.g current year: 2025
     const [daysInMonth, setDaysInMonth] = useState(getDaysInMonth(currentYear, currentMonth))
-    const [currentDateForDay, setCurrentDateForDay] = useState(getCurrentDayInMonth(currentYear, currentMonth , 2))
+    const [currentDate, setCurrentDate] = useState(getCurrentDate())
+    const [currentDayIndex, setCurrentDayIndex] = useState(getCurrentDayInMonthIndex(currentYear, currentMonth , currentDate))
 
-    useEffect(() => {
-      console.log("current month: ",currentMonth)
-      console.log("current year: ",currentYear)
-      console.log("current days: ", daysInMonth)
-      console.log("current day selected: ", getCurrentDayInMonth(currentYear, currentMonth, 1))
-    },[])
+    // useEffect(() => {
+    //   console.log("current month: ",currentMonth)
+    //   console.log("current year: ",currentYear)
+    //   console.log("current days: ", daysInMonth)
+    //   console.log("current day selected: ", getCurrentDayInMonthIndex(currentYear, currentMonth, 28))
+    //   console.log("current date: ", getCurrentDate())
+    // },[])
 
   return (
     <div
@@ -145,11 +147,24 @@ const CalendarPage = ({loading}) => {
           </div>
         </div>
         
-
+        {/* calendar buttons */}
         <div
           className='flex-row flex gap-3 overflow-x-scroll no-scrollbar'
         >
-          
+          {
+            Array.from({ length: daysInMonth }, (_, index) => {
+              
+              const date = new Date(currentYear, currentMonth, index + 1);
+              const dayNameIndex = date.getDay(); // 0 (Sun) to 6 (Sat)
+
+              return (
+              <CalendarBtn
+                key={index + 1}
+                day={days[dayNameIndex].abrName}
+                num={index + 1}
+              />
+              )
+            })}
         </div>
 
         <div
@@ -167,12 +182,12 @@ const CalendarPage = ({loading}) => {
               <span
                 className='text-xs font-medium text-DText'
               >
-                {months[currentMonth].abrName} {currentDateForDay} {currentYear}
+                {months[currentMonth].abrName} {currentDate} {currentYear}
               </span>
               <p
                 className='font-medium'
               >
-                {days[currentDateForDay].fullName}
+                {days[currentDayIndex].fullName}
               </p>
             </div>
             <button>

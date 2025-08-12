@@ -12,10 +12,10 @@ export function getCurrentYear() {
 }
 
 export function getCurrentDate() {
-    return new Date().getDay()
+    return new Date().getDate()
 }
 
-export function getCurrentDayInMonth (year, month, day) {
+export function getCurrentDayInMonthIndex (year, month, day) {
     // return new Date(year, month, day).toLocaleDateString("en-GB", { weekday: "short" })
     return new Date(year, month, day).getDay()
 }   
