@@ -106,6 +106,30 @@ const CalendarPage = ({loading}) => {
     //   console.log("current date: ", getCurrentDate())
     // },[])
 
+    useEffect(() => {
+      setDaysInMonth(getDaysInMonth(currentYear, currentMonth))
+    }, [currentMonth])
+
+    const handleMonthChange = (operation) => {
+      if (operation === 1) {
+        setCurrentMonth(currentMonth + 1)
+
+        if (currentMonth > 10) {
+          setCurrentMonth(0)
+          setCurrentYear(currentYear + 1)
+        }
+      }
+      else {
+        setCurrentMonth(currentMonth - 1)
+        if (currentMonth < 1) {
+          setCurrentYear(currentYear - 1)
+          setCurrentMonth(11)
+        }
+      }
+      
+      
+    }
+
   return (
     <div
       className='flex flex-col bg-Pr min-h-[80vh] h-fit w-full text-CText duration-200 relative font-poppins'
@@ -118,7 +142,7 @@ const CalendarPage = ({loading}) => {
       </p>
 
       <div
-        className='bg-BG p-7 rounded-tr-[2.5rem] flex flex-col gap-8 w-full min-h-[80vh] h-full'
+        className='bg-BG p-7 rounded-tr-[2.5rem] flex flex-col gap-8 w-full min-h-[80vh] h-full pb-28'
       >
         
         <div
@@ -132,13 +156,19 @@ const CalendarPage = ({loading}) => {
           <div
             className='flex flex-row items-center gap-3'
           >
-            <button>
+            <button
+              onClick={() => handleMonthChange(2)}
+              className='p-1'
+            >
               <svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
                 fill="currentColor" viewBox="0 0 24 24" >
                 <path d="M14.29 6.29 8.59 12l5.7 5.71 1.42-1.42-4.3-4.29 4.3-4.29z"></path>
               </svg>
             </button>
-            <button>
+            <button
+              onClick={() => handleMonthChange(1)}
+              className='p-1'
+            >
               <svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
                 fill="currentColor" viewBox="0 0 24 24" >
                 <path d="m9.71 17.71 5.7-5.71-5.7-5.71-1.42 1.42 4.3 4.29-4.3 4.29z"></path>
