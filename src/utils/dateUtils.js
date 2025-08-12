@@ -14,3 +14,8 @@ export function getCurrentYear() {
 export function getCurrentDate() {
     return new Date().getDay()
 }
+
+export function getCurrentDayInMonth (year, month, day) {
+    // return new Date(year, month, day).toLocaleDateString("en-GB", { weekday: "short" })
+    return new Date(year, month, day).getDay()
+}   

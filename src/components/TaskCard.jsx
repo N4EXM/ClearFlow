@@ -10,12 +10,14 @@ const TaskCard = ({title, description}) => {
             className='w-fit h-full flex flex-col gap-1'
         >
             <input 
+                readOnly
                 value={title}
                 type="text" 
                 placeholder='Task title...'
                 className='w-40 outline-none text-sm font-medium placeholder:text-DText'
             />
             <textarea 
+                readOnly
                 value={description}
                 type="text"
                 placeholder='Task description...'

@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
-import { getCurrentMonth, getCurrentYear, getDaysInMonth } from '../utils/dateUtils'
+import React, { useEffect, useState } from 'react'
+// import { useCurrentDateInfo } from '../hooks/useCurrentDateInfo'
+import { getCurrentMonth, getCurrentDate, getCurrentDayInMonth, getCurrentYear, getDaysInMonth } from '../utils/dateUtils'
 import CalendarBtn from '../components/CalendarBtn'
 import NewTaskCard from '../components/NewTaskCard'
 import TaskCard from '../components/TaskCard'
@@ -7,6 +8,7 @@ import TaskCard from '../components/TaskCard'
 const CalendarPage = ({loading}) => {
 
     const [error, setError] = useState("")
+    // const dateInfo = useCurrentDateInfo()
 
     const months = [
       {
@@ -59,9 +61,52 @@ const CalendarPage = ({loading}) => {
       },
     ]
 
+    const days = [
+      {
+        fullName: "Sunday",
+        abrName: "Sun"
+      },
+      {
+        fullName: "Monday",
+        abrName: "Mon"
+      },
+      {
+        fullName: "Tuesday",
+        abrName: "Tue"
+      },
+      {
+        fullName: "Wednesday",
+        abrName: "Wed"
+      },
+      {
+        fullName: "Thursday",
+        abrName: "Thu"
+      },
+      {
+        fullName: "Friday",
+        abrName: "Fri"
+      },
+      {
+        fullName: "Saturday",
+        abrName: "Sat"
+      },
+    ]
+
+    const [currentMonth, setCurrentMonth] = useState(getCurrentMonth()) // 0 - 12 months
+    const [currentYear, setCurrentYear] = useState(getCurrentYear()) // e.g current year: 2025
+    const [daysInMonth, setDaysInMonth] = useState(getDaysInMonth(currentYear, currentMonth))
+    const [currentDateForDay, setCurrentDateForDay] = useState(getCurrentDayInMonth(currentYear, currentMonth , 2))
+
+    useEffect(() => {
+      console.log("current month: ",currentMonth)
+      console.log("current year: ",currentYear)
+      console.log("current days: ", daysInMonth)
+      console.log("current day selected: ", getCurrentDayInMonth(currentYear, currentMonth, 1))
+    },[])
+
   return (
     <div
-      className='flex flex-col bg-Pr min-h-screen h-full w-full text-CText duration-200 relative font-poppins'
+      className='flex flex-col bg-Pr min-h-[80vh] h-fit w-full text-CText duration-200 relative font-poppins'
     >
       
       <p
@@ -80,7 +125,7 @@ const CalendarPage = ({loading}) => {
           <p
             className='font-semibold text-lg'
           >
-            August 2025
+            {months[currentMonth].fullName} {currentYear}
           </p>
           <div
             className='flex flex-row items-center gap-3'
@@ -104,26 +149,7 @@ const CalendarPage = ({loading}) => {
         <div
           className='flex-row flex gap-3 overflow-x-scroll no-scrollbar'
         >
-          <CalendarBtn
-            day={"Mon"}
-            num={1}
-          />
-          <CalendarBtn
-            day={"Tue"}
-            num={2}
-          />
-          <CalendarBtn
-            day={"Wed"}
-            num={3}
-          />
-          <CalendarBtn
-            day={"Thu"}
-            num={4}
-          />
-          <CalendarBtn
-            day={"Fri"}
-            num={5}
-          />
+          
         </div>
 
         <div
@@ -141,12 +167,12 @@ const CalendarPage = ({loading}) => {
               <span
                 className='text-xs font-medium text-DText'
               >
-                Aug 2 2025
+                {months[currentMonth].abrName} {currentDateForDay} {currentYear}
               </span>
               <p
                 className='font-medium'
               >
-                Monday
+                {days[currentDateForDay].fullName}
               </p>
             </div>
             <button>
@@ -194,6 +220,21 @@ const CalendarPage = ({loading}) => {
 
         </div>
 
+        {/* {dateInfo !== null &&
+          <div
+            className='flex flex-col gap-5'
+          >
+          <h2>Current Date Information</h2>
+          <p>Full date: {dateInfo.date.toString()} {dateInfo.day.other}</p>
+          <p>Day: {dateInfo.day.long} ({dateInfo.day.short})</p>
+          <p>last day: {dateInfo.day.daysInMonth}</p>
+          <p>Month: {dateInfo.month.long} ({dateInfo.month.short})</p>
+          <p>Year: {dateInfo.year}</p>
+          <p>Day of month: {dateInfo.dayOfMonth}</p>
+          <p>Time: {dateInfo.time.hours}:{dateInfo.time.minutes}:{dateInfo.time.seconds}</p>
+        </div>
+        } */}
+        
 
       </div>
 
