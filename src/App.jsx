@@ -16,6 +16,7 @@ import EditProject from './pages/EditProject'
 import CalendarPage from './pages/CalendarPage'
 import Navbar from './components/Navbar'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { mockProjects, mockTasks } from './data'
 
 function App() {
 
@@ -57,12 +58,19 @@ function App() {
               loading
               ? <CalendarPage
                   loading={loading}
+                  mockProjects={mockProjects}
+                  mockTasks={mockTasks}
                 />
               : <LoadingPage/>
             }
           />
           <Route
-          
+            path={'/EditProject'}
+            element={
+              loading
+              ? <EditProject/>
+              : <LoadingPage/>
+            }  
           />
         </Routes>        
         <Navbar

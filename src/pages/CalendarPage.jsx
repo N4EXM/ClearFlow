@@ -1,14 +1,17 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { getCurrentMonth, getCurrentDate, getCurrentDayInMonthIndex, getCurrentYear, getDaysInMonth } from '../utils/dateUtils'
+import { getCurrentMonth, getCurrentDate, getCurrentDayInMonthIndex, getCurrentYear, getDaysInMonth, getDateInDMY_Format } from '../utils/dateUtils'
 import CalendarBtn from '../components/CalendarBtn'
 import NewTaskCard from '../components/NewTaskCard'
 import TaskCard from '../components/TaskCard'
 
-const CalendarPage = ({loading}) => {
+const CalendarPage = ({loading, mockTasks, mockProjects}) => {
 
     const [error, setError] = useState("")
+    const [tasks, setTasks] = useState(mockTasks)
+    const [projects, setProjects] = useState(mockProjects)
     // const dateInfo = useCurrentDateInfo()
 
+    const [loadedTasks, setLoadedTasks] = useState([]) // contains the tasks of the current date
     const months = [
       {
         fullName: "January",
@@ -106,10 +109,38 @@ const CalendarPage = ({loading}) => {
       setSelectedDate(index)
     }
 
+    // adds or subtracts one from the current month index and changes years
+    const handleMonthChange = (operation) => {
+      if (operation === 1) {
+        setSelectedMonth(selectedMonth + 1)
+        if (selectedMonth > 10) {
+          setSelectedMonth(0)
+          setSelectedYear(selectedYear + 1)
+        }
+      }
+      else {
+        setSelectedMonth(selectedMonth - 1)
+        if (selectedMonth < 1) {
+          setSelectedYear(selectedYear - 1)
+          setSelectedMonth(11)
+        }
+      }      
+    }
+
+    // loads the tasks associated with the selected date
+    const handleTasksDateChange = (date) => {
+
+      if (date === tasks.date) {
+        setLoadedTasks(tasks.filter(tasks.date === date))
+      }
+
+    }
+
     // changes the days to the current month
     useEffect(() => {
       setDaysInMonth(getDaysInMonth(selectedYear, selectedMonth))
       setSelectedDayIndex(getCurrentDayInMonthIndex(selectedYear, selectedMonth, selectedDate));
+      
     }, [selectedDate, selectedMonth, selectedYear]);
 
     // slides automatically to the selected calendarBtn
@@ -126,7 +157,7 @@ const CalendarPage = ({loading}) => {
       
         // Scroll to center the button
         container.scrollTo({
-          left: buttonLeft - (containerWidth / 2) + (buttonWidth / 2),
+          left: buttonLeft - (containerWidth / 2) + ((buttonWidth + 140) / 2),
           behavior: 'smooth'
         });
       }
@@ -149,22 +180,10 @@ const CalendarPage = ({loading}) => {
       }
     }, [selectedMonth])
 
-    const handleMonthChange = (operation) => {
-      if (operation === 1) {
-        setSelectedMonth(selectedMonth + 1)
-        if (selectedMonth > 10) {
-          setSelectedMonth(0)
-          setSelectedYear(selectedYear + 1)
-        }
-      }
-      else {
-        setSelectedMonth(selectedMonth - 1)
-        if (selectedMonth < 1) {
-          setSelectedYear(selectedYear - 1)
-          setSelectedMonth(11)
-        }
-      }      
-    }
+    useEffect(() => {
+      handleTasksDateChange(getDateInDMY_Format(selectedYear, selectedMonth, selectedDate))
+      console.log(getDateInDMY_Format(selectedYear, selectedMonth, selectedDate))
+    }, [selectedDate])
 
   return (
     <div
@@ -194,7 +213,7 @@ const CalendarPage = ({loading}) => {
           >
             <button
               onClick={() => handleMonthChange(2)}
-              className='p-1 active:bg-Pr duration-200 rounded-full'
+              className='p-1 active:bg-Pr duration-500 rounded-full'
             >
               <svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
                 fill="currentColor" viewBox="0 0 24 24" >
@@ -203,7 +222,7 @@ const CalendarPage = ({loading}) => {
             </button>
             <button
               onClick={() => handleMonthChange(1)}
-              className='p-1 active:bg-Pr duration-200 rounded-full'
+              className='p-1 active:bg-Pr duration-500 rounded-full'
             >
               <svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
                 fill="currentColor" viewBox="0 0 24 24" >
@@ -232,6 +251,7 @@ const CalendarPage = ({loading}) => {
                   selectedDate={selectedDate}
                   num={index + 1}
                   handleCalendarBtnChange={() => handleCalendarBtnChange(index + 1)}
+
                 />
               )
             })}
@@ -278,31 +298,44 @@ const CalendarPage = ({loading}) => {
             className='flex flex-col gap-3 w-full h-full pt-3'
           >
 
-            <div
+            {loadedTasks.length > 0 
+              ? loadedTasks.map((task, index) => (
+                  <div
+                    className='flex flex-row items-start justify-start gap-2'
+                  >
+                    <span
+                      className='p-1 rounded-full border border-Pr min-w-6 text-[0.6rem] h-fit flex items-center bg-BGS font-medium justify-center mt-2'
+                    >
+                      {index + 1}
+                    </span>
+                      <TaskCard
+                        title={task.title}
+                        description={task.description}
+                      /> 
+                  </div> 
+                ))
+              : <div
+                  className='w-full h-full'
+                >
+                  <p
+                    className='font-medium text-CText/70 text-sm '
+                  >
+                    No Tasks due for today
+                  </p>
+                </div>
+              
+            }
+
+            {/* <div
               className='flex flex-row items-start justify-start gap-2'
             >
               <span
                 className='p-1 rounded-full border border-Pr min-w-6 text-[0.6rem] h-fit flex items-center bg-BGS font-medium justify-center mt-2'
               >
-                1
-              </span>
-              <TaskCard
-                title={"Fix the Auth system"}
-                description={"Fix the login function, the logout function, the Register function and the check-auth function."}
-              /> 
-            </div>
-
-            <div
-              className='flex flex-row items-start justify-start gap-2'
-            >
-              <span
-              className='p-1 rounded-full border border-Pr min-w-6 text-[0.6rem] h-fit flex items-center bg-BGS font-medium justify-center mt-2'
-            >
                 2
               </span>
               <NewTaskCard/>
-            
-            </div>
+            </div> */}
 
           </div>
 
