@@ -48,7 +48,9 @@ function App() {
             path={"/newProject"}
             element={
               loading
-              ? <Project/>
+              ? <Project
+                  loading={loading}
+                />
               : <LoadingPage/>
             }
           />
