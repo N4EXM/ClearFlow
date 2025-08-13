@@ -130,9 +130,14 @@ const CalendarPage = ({loading, mockTasks, mockProjects}) => {
     // loads the tasks associated with the selected date
     const handleTasksDateChange = (date) => {
 
-      if (date === tasks.date) {
-        setLoadedTasks(tasks.filter(tasks.date === date))
-      }
+      if (!tasks || !Array.isArray(tasks)) return;
+  
+      const filteredTasks = tasks.filter(task => {
+        // Assuming each task has a date property in the same format as getDateInDMY_Format returns
+        return task.date === date;
+      });
+  
+      setLoadedTasks(filteredTasks);
 
     }
 
@@ -181,9 +186,11 @@ const CalendarPage = ({loading, mockTasks, mockProjects}) => {
     }, [selectedMonth])
 
     useEffect(() => {
-      handleTasksDateChange(getDateInDMY_Format(selectedYear, selectedMonth, selectedDate))
-      console.log(getDateInDMY_Format(selectedYear, selectedMonth, selectedDate))
-    }, [selectedDate])
+      if (selectedDate) {
+        const formattedDate = getDateInDMY_Format(selectedYear, selectedMonth, selectedDate);
+        handleTasksDateChange(formattedDate);
+      }
+    }, [selectedDate, selectedMonth, selectedYear, tasks]);
 
   return (
     <div
@@ -309,8 +316,10 @@ const CalendarPage = ({loading, mockTasks, mockProjects}) => {
                       {index + 1}
                     </span>
                       <TaskCard
+                        key={task.id}
                         title={task.title}
                         description={task.description}
+                        projectName={task.projectName}
                       /> 
                   </div> 
                 ))

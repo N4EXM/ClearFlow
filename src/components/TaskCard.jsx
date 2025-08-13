@@ -1,6 +1,6 @@
 import React from 'react'
 
-const TaskCard = ({title, description}) => {
+const TaskCard = ({title, description, projectName}) => {
   return (
     <div
         className='w-full min-h-32 h-full bg-BGS rounded-md px-4 py-4 pt-3 flex flex-col justify-between'
@@ -35,7 +35,7 @@ const TaskCard = ({title, description}) => {
                 <p
                     className='text-xs font-medium text-DText'
                 >
-                    Todo App Project
+                    {projectName}
                 </p>
                 <svg  xmlns="http://www.w3.org/2000/svg" width="20" height="20"  
                     fill="currentColor" viewBox="0 0 24 24" >
