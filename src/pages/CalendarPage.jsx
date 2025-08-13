@@ -44,7 +44,7 @@ const CalendarPage = ({loading}) => {
       },
       {
         fullName: "September",
-        abrName: "Sept"
+        abrName: "Sep"
       },
       {
         fullName: "October",
@@ -90,9 +90,11 @@ const CalendarPage = ({loading}) => {
       },
     ]
     const today = getCurrentDate()
+    const month =  getCurrentMonth()
+    const year = getCurrentYear()
 
-    const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth()) // 0 - 12 months
-    const [selectedYear, setSelectedYear] = useState(getCurrentYear()) // e.g current year: 2025
+    const [selectedMonth, setSelectedMonth] = useState(month) // 0 - 12 months
+    const [selectedYear, setSelectedYear] = useState(year) // e.g current year: 2025
     const [daysInMonth, setDaysInMonth] = useState(getDaysInMonth(selectedYear, selectedMonth))
     const [selectedDate, setSelectedDate] = useState(today)
     const [selectedDayIndex, setSelectedDayIndex] = useState(getCurrentDayInMonthIndex(selectedYear, selectedMonth , selectedDate))
@@ -100,10 +102,13 @@ const CalendarPage = ({loading}) => {
     const scrollContainerRef = useRef(null);
     const dateButtonRefs = useRef([]);
 
-    
+    const handleCalendarBtnChange = (index) => {
+      setSelectedDate(index)
+    }
 
     // changes the days to the current month
     useEffect(() => {
+      setDaysInMonth(getDaysInMonth(selectedYear, selectedMonth))
       setSelectedDayIndex(getCurrentDayInMonthIndex(selectedYear, selectedMonth, selectedDate));
     }, [selectedDate, selectedMonth, selectedYear]);
 
@@ -125,11 +130,24 @@ const CalendarPage = ({loading}) => {
           behavior: 'smooth'
         });
       }
+      else {
+        const container = scrollContainerRef.current;
+        container.scrollTo({
+          left: 0,
+          behavior: 'smooth'
+        });
+      }
     }, [selectedMonth, selectedDate]);
 
-    // useEffect(() => {
-    //   if (curr)
-    // }, [currentMonth])
+    // checks if the date is from current month and year
+    useEffect(() => {
+      if (selectedMonth === month && selectedYear === year) {
+        setSelectedDate(today)
+      }
+      else {
+        setSelectedDate(null)
+      }
+    }, [selectedMonth])
 
     const handleMonthChange = (operation) => {
       if (operation === 1) {
@@ -213,6 +231,7 @@ const CalendarPage = ({loading}) => {
                   day={days[dayNameIndex].abrName}
                   selectedDate={selectedDate}
                   num={index + 1}
+                  handleCalendarBtnChange={() => handleCalendarBtnChange(index + 1)}
                 />
               )
             })}
@@ -238,7 +257,10 @@ const CalendarPage = ({loading}) => {
               <p
                 className='font-medium'
               >
-                {days[selectedDayIndex].fullName}
+                {selectedDate === today && selectedMonth === month && selectedYear === year 
+                  ? "Today"
+                  : days[selectedDayIndex].fullName
+                }
               </p>
             </div>
             <button>
