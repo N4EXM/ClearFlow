@@ -1,5 +1,5 @@
 import React from 'react'
-import CircularProgressBar from '../components/CircularProgressBar'
+import CircularProgressBar from './CircularProgressBar'
 
 
 const ProjectCard = () => {

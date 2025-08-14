@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import ProjectTaskCard from '../components/Project/ProjectTaskCard'
 
 const Project = ({loading}) => {
 
   const navigate = useNavigate()
-  const [isWarningBoxActive, setIsWarningBoxActive] = useState(false)
+  const [isWarningBoxActive, setIsWarningBoxActive] = useState(false) // activates the warning dialogue box
+  const [isNewTaskActive, setIsNewTaskActive] = useState(false) // activates the new task card for the project
 
   // project details
   const [ProjectTitle, setProjectTitle] = useState("")
@@ -108,8 +110,7 @@ const Project = ({loading}) => {
             >
               <input 
                 type="date" 
-                placeholder='Project Name'
-                className='placeholder:text-DText border-none bg-transparent font-bold outline-none w-full'  
+                className='text-CText border-none bg-transparent font-bold outline-none w-full'  
               />
               <span className='w-full h-0.5 bg-separator'></span>
             </div>
@@ -132,9 +133,31 @@ const Project = ({loading}) => {
               <span className='w-full h-0.5 bg-separator'></span>
             </div>
 
-
+            {/* current tasks for the project */}
             <div>
-
+              {
+                tasks.length > 0
+                  ? <div>
+                      <ProjectTaskCard/>
+                    </div> 
+                  : <p className={`font-semibold text-DText ${isNewTaskActive ? "hidden" : "block"}`}>
+                      No tasks have been created
+                    </p>
+              }
+            
+              <div
+                className={`${isNewTaskActive ? "flex" : "hidden"} flex-row gap-2 justify-start items-start`}
+              >
+                <span
+                  className='p-1 rounded-full border border-Pr min-w-6 text-[0.6rem] h-fit flex items-center bg-BGS font-medium justify-center mt-2'
+                >
+                  {tasks.length + 1}
+                </span>
+                <ProjectTaskCard
+                  setIsNewTaskActive={setIsNewTaskActive}
+                />
+              </div>
+              
             </div>
 
           </div>
@@ -143,6 +166,7 @@ const Project = ({loading}) => {
             className='absolute bottom-0 p-5 left-0 flex flex-row items-center justify-end gap-2 w-full '
           >
             <button
+              onClick={() => setIsNewTaskActive(true)}
               className='bg-Pr rounded-full p-2.5'
             >    
               <svg  xmlns="http://www.w3.org/2000/svg" width="28" height="28"  

@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { getCurrentMonth, getCurrentDate, getCurrentDayInMonthIndex, getCurrentYear, getDaysInMonth, getDateInDMY_Format } from '../utils/dateUtils'
-import CalendarBtn from '../components/CalendarBtn'
-import NewTaskCard from '../components/NewTaskCard'
-import TaskCard from '../components/TaskCard'
+import CalendarBtn from '../components/calendar/CalendarBtn'
+import NewCalendarTaskCard from '../components/calendar/NewCalendarTaskCard'
+import TaskCard from '../components/calendar/TaskCard'
 
 const CalendarPage = ({loading, mockTasks, mockProjects}) => {
 

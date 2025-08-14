@@ -1,7 +1,7 @@
 import React from 'react'
-import ProjectCard from '../components/ProjectCard'
-import UpcomingTask from '../components/UpcomingTask'
-import StatisticsCard from '../components/StatisticsCard'
+import ProjectCard from '../components/home/ProjectCard'
+import UpcomingTask from '../components/home/UpcomingTask'
+import StatisticsCard from '../components/home/StatisticsCard'
 
 const Home = ({loading}) => {
   return (
