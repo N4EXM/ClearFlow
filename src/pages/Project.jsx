@@ -18,7 +18,6 @@ const Project = ({loading}) => {
   const [taskDueDate, setTaskDueDate] = useState("")
   const [tasks, setTasks] = useState([])
 
-
   return (
     <div
       className={`relative font-poppins text-CText`}
