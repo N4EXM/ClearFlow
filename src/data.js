@@ -14,6 +14,7 @@ export const mockTasks = [
         title: "Fix the Auth system",
         description: "Fix the login function, the logout function, the Register function and the check-auth function",
         date: "12/09/2025",
+        projectId: 0,
         projectName: "Todo App",
         completed: true
     },
@@ -22,6 +23,7 @@ export const mockTasks = [
         title: "Build a Login Page",
         description: "create the login page in react and all the functionality needed for it like api handling",
         date: "18/08/2025",
+        projectId: 0,
         projectName: "Todo App",
         completed: false
     },
@@ -31,6 +33,7 @@ export const mockTasks = [
         description: "Fix the login function, the logout function, the Register function and the check-auth function",
         projectName: "Todo App",
         date: "12/09/2025",
+        projectId: 0,
         completed: false
     },
     {
@@ -38,6 +41,7 @@ export const mockTasks = [
         title: "Take out the trash",
         description: "doesn't really require an explanation",
         projectName: "No project",
+        ProjectId: null,
         date: "15/08/2025",
         completed: false
     },

@@ -6,52 +6,63 @@ const Project = ({loading}) => {
   const navigate = useNavigate()
   const [isWarningBoxActive, setIsWarningBoxActive] = useState(false)
 
+  // project details
+  const [ProjectTitle, setProjectTitle] = useState("")
+  const [projectDueDate, setProjectDueDate] = useState("")
+  
+  // tasks details
+  const [taskTitle, setTaskTitle] = useState("")
+  const [taskDesc, setTaskDesc] = useState("")
+  const [taskDueDate, setTaskDueDate] = useState("")
+  const [tasks, setTasks] = useState([])
+
+
   return (
     <div
       className={`relative font-poppins text-CText`}
     >
 
       <div
-          className={`${isWarningBoxActive ? "flex" : "hidden"} flex-col gap-5 p-3 pt-4 bg-BGS rounded-md border border-Pr absolute top-1/2 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 w-3/4 min-h-1/5 h-fit opacity-100`}
+        className={`${isWarningBoxActive ? "flex" : "hidden"} flex-col gap-5 p-3 pt-4 bg-BGS rounded-md border border-Pr absolute top-1/2 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 w-3/4 min-h-1/5 h-fit opacity-100 duration-300`}
+      >
+        <div
+          className='flex flex-col gap-3 items-center'
         >
+          <svg className='p-2 bg-Pr rounded-full' xmlns="http://www.w3.org/2000/svg" width="48" height="48"  
+            fill="currentColor" viewBox="0 0 24 24" >
+            <path d="M11 7h2v6h-2zM11 15h2v2h-2z"></path><path d="M12 22c5.51 0 10-4.49 10-10S17.51 2 12 2 2 6.49 2 12s4.49 10 10 10m0-18c4.41 0 8 3.59 8 8s-3.59 8-8 8-8-3.59-8-8 3.59-8 8-8"></path>
+          </svg>
           <div
-            className='flex flex-col gap-3 items-center'
+            className='flex flex-col gap-1.5'
           >
-            <svg className='p-2 bg-Pr rounded-full' xmlns="http://www.w3.org/2000/svg" width="48" height="48"  
-              fill="currentColor" viewBox="0 0 24 24" >
-              <path d="M11 7h2v6h-2zM11 15h2v2h-2z"></path><path d="M12 22c5.51 0 10-4.49 10-10S17.51 2 12 2 2 6.49 2 12s4.49 10 10 10m0-18c4.41 0 8 3.59 8 8s-3.59 8-8 8-8-3.59-8-8 3.59-8 8-8"></path>
-            </svg>
-            <div
-              className='flex flex-col gap-1.5'
+            <p 
+              className='text-center text-lg font-semibold'
             >
-              <p 
-                className='text-center text-lg font-semibold'
-              >
-                Are you want to exit?
-              </p>
-              <p
-                className='text-center text-CText/60 text-xs'
-              >
-                All of you data will be lost
-              </p>
-            </div>
+              Are you want to exit?
+            </p>
+            <p
+              className='text-center text-CText/60 text-xs'
+            >
+              All of you data will be lost
+            </p>
           </div>
-          <div
-            className='flex flex-row items-center gap-2'
+        </div>
+        <div
+          className='flex flex-row items-center gap-2'
+        >
+          <button
+            onClick={() => setIsWarningBoxActive(false)}
+            className='font-medium w-1/2 p-2 border border-Pr rounded-md text-sm bg-BG'
           >
-            <button
-              onClick={() => setIsWarningBoxActive(false)}
-              className='font-medium w-1/2 p-2 border border-Pr rounded-md text-sm bg-BG'
-            >
-              Cancel
-            </button>
-            <button
-              onClick={() => navigate(-1)}
-              className='w-1/2 p-2 border bg-rose-500 border-rose-500 rounded-md text-sm font-medium'
-            >
-              Exit
-            </button>
-          </div>
+            Cancel
+          </button>
+          <button
+            onClick={() => navigate(-1)}
+            className='w-1/2 p-2 border bg-rose-500 border-rose-500 rounded-md text-sm font-medium'
+          >
+            Exit
+          </button>
+        </div>
       </div>
 
       <div
@@ -98,15 +109,18 @@ const Project = ({loading}) => {
               <input 
                 type="date" 
                 placeholder='Project Name'
-                className='text-DText border-none bg-transparent font-bold outline-none w-full'  
+                className='placeholder:text-DText border-none bg-transparent font-bold outline-none w-full'  
               />
               <span className='w-full h-0.5 bg-separator'></span>
             </div>
             
           </div>
 
-          <div>
+          <div
+            className='flex flex-col gap-3'
+          >
 
+            {/* separator */}
             <div
               className='flex flex-col gap-1'
             >
@@ -118,13 +132,31 @@ const Project = ({loading}) => {
               <span className='w-full h-0.5 bg-separator'></span>
             </div>
 
+
+            <div>
+
+            </div>
+
           </div>
 
           <div
-          
+            className='absolute bottom-0 p-5 left-0 flex flex-row items-center justify-end gap-2 w-full '
           >
-            <button>
-
+            <button
+              className='bg-Pr rounded-full p-2.5'
+            >    
+              <svg  xmlns="http://www.w3.org/2000/svg" width="28" height="28"  
+                fill="currentColor" viewBox="0 0 24 24" >
+                <path d="M3 13h8v8h2v-8h8v-2h-8V3h-2v8H3z"></path>
+              </svg>
+            </button>
+            <button
+              className='bg-Pr rounded-full p-2.5'
+            >    
+              <svg  xmlns="http://www.w3.org/2000/svg" width="28" height="28"  
+                fill="currentColor" viewBox="0 0 24 24" >
+                <path d="M9 15.59 4.71 11.3 3.3 12.71l5 5c.2.2.45.29.71.29s.51-.1.71-.29l11-11-1.41-1.41L9.02 15.59Z"></path>
+              </svg>
             </button>
           </div>
 
