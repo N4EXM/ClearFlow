@@ -1,34 +1,64 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
-const ProjectTaskCard = ({id, title, desc, date}) => {
+const NewTaskCard = ({setIsNewTaskActive, handleAddingTasks}) => {
 
-  const [newTitle, setNewTitle] = useState(title)
-  const [newDesc, setNewDesc] = useState(desc)
-  const [newDate, setNewDate] = useState(date)
+    const [title, setTitle] = useState("")
+    const [desc, setDesc] = useState("")
+    const [date, setDate] = useState("")
+    const [formattedDate, setFormattedDate] = useState("")
+
+    const handleTitleChange = (e) => {
+        const value = e.target.value;
+        if (value.length <= 24) {
+            setTitle(value);
+        }
+        // If length exceeds maxLength, don't update the state
+    }
+
+    const handleDateChange = (e) => {
+        const date = e.target.value
+        setDate(date)
+        const [year, month, day] = date.split("-");
+        setFormattedDate(`${day}-${month}-${year}`)
+    }
+
+    const handleNewTaskClose = () => {
+        setIsNewTaskActive(false)
+        setTitle("")
+        setDesc("")
+        setDate("")
+    }
+
+    useEffect(() => {
+        console.log(date)
+        console.log(formattedDate)
+    }, [date])
 
   return (
     <div
         className='w-full min-h-32 h-full bg-BGS rounded-md px-4 py-4 pt-3 flex flex-col justify-between'
     >
+        
         <div
             className='w-fit h-full flex flex-col gap-1'
         >
-          <input 
-            // onChange={(e) => handleTitleChange(e)}
-            value={title}
-            type="text" 
-            placeholder='Task title...'
-            className='w-full outline-none text-sm font-medium placeholder:text-DText'
-          />
-          <textarea 
-            // onChange={(e) => setDesc(e.target.value)}
-            value={desc}
-            type="text"
-            placeholder='Task description...'
-            className='w-56 h-full min-h-16 resize-none no-scrollbar outline-none text-xs font-medium placeholder:text-DText text-CText/70'
-            maxLength={130}
-          ></textarea>
+            <input 
+                onChange={(e) => handleTitleChange(e)}
+                value={title}
+                type="text" 
+                placeholder='Task title...'
+                className='w-full outline-none text-sm font-medium placeholder:text-DText'
+            />
+            <textarea 
+                onChange={(e) => setDesc(e.target.value)}
+                value={desc}
+                type="text"
+                placeholder='Task description...'
+                className='w-56 h-full min-h-16 resize-none no-scrollbar outline-none text-xs font-medium placeholder:text-DText text-CText/70'
+                maxLength={130}
+            ></textarea>
         </div>
+
         <div
             className='flex item-end justify-end w-full h-full'
         >
@@ -65,8 +95,10 @@ const ProjectTaskCard = ({id, title, desc, date}) => {
                 </div>
             </div>
         </div>
+        
+
     </div>
   )
 }
 
-export default ProjectTaskCard
+export default NewTaskCard

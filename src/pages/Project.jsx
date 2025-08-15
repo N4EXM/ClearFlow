@@ -1,6 +1,8 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useNavigate } from 'react-router-dom'
+import NewTaskCard from '../components/Project/NewTaskCard'
 import ProjectTaskCard from '../components/Project/ProjectTaskCard'
+import { useEffect, useState} from 'react'
 
 const Project = ({loading}) => {
 
@@ -17,6 +19,17 @@ const Project = ({loading}) => {
   const [taskDesc, setTaskDesc] = useState("")
   const [taskDueDate, setTaskDueDate] = useState("")
   const [tasks, setTasks] = useState([])
+
+  const handleAddingTasks = (title, desc, date, formattedDate) => {
+    const newTask = {
+      title: title,
+      desc: desc,
+      date: date,
+      formattedDate: formattedDate
+    }
+    setTasks([...tasks, newTask])
+    console.log(tasks)
+  }
 
   return (
     <div
@@ -137,12 +150,29 @@ const Project = ({loading}) => {
               {
                 tasks.length > 0
                   ? <div>
-                      <ProjectTaskCard/>
+                      <TaskCard/>
                     </div> 
-                  : <p className={`font-semibold text-DText ${isNewTaskActive ? "hidden" : "block"}`}>
+                  : <p className={`font-semibold text-DText hidden ${isNewTaskActive ? "hidden" : "block"}`}>
                       No tasks have been created
                     </p>
               }
+              <div
+                className='flex flex-row items-start justify-start gap-2'
+              >
+                <span
+                  className='p-1 rounded-full border border-Pr min-w-6 text-[0.6rem] h-fit flex items-center bg-BGS font-medium justify-center mt-2'
+                >
+                  1
+                </span>
+                <ProjectTaskCard
+                  id={0}
+                  title={"Fix the Auth system"}
+                  desc={"Fix the login function, the logout function, the Register function and the check-auth function."}
+                  date={"2025-05-22"}
+                />
+
+              </div>
+              
             
               <div
                 className={`${isNewTaskActive ? "flex" : "hidden"} flex-row gap-2 justify-start items-start`}
@@ -152,8 +182,9 @@ const Project = ({loading}) => {
                 >
                   {tasks.length + 1}
                 </span>
-                <ProjectTaskCard
+                <NewTaskCard
                   setIsNewTaskActive={setIsNewTaskActive}
+                  handleAddingTasks={handleAddingTasks}
                 />
               </div>
               
