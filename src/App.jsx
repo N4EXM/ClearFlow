@@ -16,12 +16,22 @@ import EditProject from './pages/EditProject'
 import CalendarPage from './pages/CalendarPage'
 import Navbar from './components/Navbar'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { mockProjects, mockTasks } from './data'
+import {getProjects, getTasks} from './database/db'
+
 
 function App() {
 
+  // database functions
+  // const { isInitialised, projects, tasks } = useDatabase()
+
+  // toggles 
   const [loading, setLoading] = useState(false)
 
+  // tasks details
+  const [currentProjects, setCurrentProjects] = useState(getProjects())
+  const [currentTasks, setCurrentTasks] = useState(getTasks())
+ 
+  // lets all the stuff load first
   useEffect(() => {
     setTimeout(() => {
       setLoading(true)
@@ -41,6 +51,8 @@ function App() {
               loading 
               ? <Home
                   loading={loading}
+                  projects={currentProjects}
+                  tasks={currentTasks}
                 /> 
               : <LoadingPage/>}
           />
@@ -49,6 +61,8 @@ function App() {
             element={
               loading
               ? <Project
+                  projects={currentProjects}
+                  tasks={currentTasks}
                   loading={loading}
                 />
               : <LoadingPage/>
@@ -60,8 +74,8 @@ function App() {
               loading
               ? <CalendarPage
                   loading={loading}
-                  mockProjects={mockProjects}
-                  mockTasks={mockTasks}
+                  projects={currentProjects}
+                  tasks={currentTasks}
                 />
               : <LoadingPage/>
             }

@@ -9,7 +9,7 @@ const NewTaskCard = ({setIsNewTaskActive, handleAddingTasks}) => {
 
     const handleTitleChange = (e) => {
         const value = e.target.value;
-        if (value.length <= 24) {
+        if (value.length <= 28) {
             setTitle(value);
         }
         // If length exceeds maxLength, don't update the state
@@ -29,10 +29,10 @@ const NewTaskCard = ({setIsNewTaskActive, handleAddingTasks}) => {
         setDate("")
     }
 
-    useEffect(() => {
-        console.log(date)
-        console.log(formattedDate)
-    }, [date])
+    const addingTask = () => {
+        handleAddingTasks(title, desc, date)
+        handleNewTaskClose()
+    }
 
   return (
     <div
@@ -84,7 +84,7 @@ const NewTaskCard = ({setIsNewTaskActive, handleAddingTasks}) => {
                         </svg>
                     </button>
                     <button
-                        onClick={() => handleAddingTasks(title, desc, date, formattedDate)}
+                        onClick={() => addingTask()}
                         className='p-2 rounded-sm bg-Pr'
                     >
                         <svg  xmlns="http://www.w3.org/2000/svg" width="16" height="16"  

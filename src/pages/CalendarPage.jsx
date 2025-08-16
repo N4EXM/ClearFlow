@@ -7,7 +7,7 @@ import TaskCard from '../components/calendar/TaskCard'
 const CalendarPage = ({loading, mockTasks, mockProjects}) => {
 
     const [error, setError] = useState("")
-    const [tasks, setTasks] = useState(mockTasks)
+    const [tasks] = useState(mockTasks)
     const [projects, setProjects] = useState(mockProjects)
     // const dateInfo = useCurrentDateInfo()
 
@@ -308,6 +308,7 @@ const CalendarPage = ({loading, mockTasks, mockProjects}) => {
             {loadedTasks.length > 0 
               ? loadedTasks.map((task, index) => (
                   <div
+                    key={index + 1}
                     className='flex flex-row items-start justify-start gap-2'
                   >
                     <span
@@ -316,7 +317,6 @@ const CalendarPage = ({loading, mockTasks, mockProjects}) => {
                       {index + 1}
                     </span>
                       <TaskCard
-                        key={task.id}
                         title={task.title}
                         description={task.description}
                         projectName={task.projectName}
@@ -349,22 +349,6 @@ const CalendarPage = ({loading, mockTasks, mockProjects}) => {
           </div>
 
         </div>
-
-        {/* {dateInfo !== null &&
-          <div
-            className='flex flex-col gap-5'
-          >
-          <h2>Current Date Information</h2>
-          <p>Full date: {dateInfo.date.toString()} {dateInfo.day.other}</p>
-          <p>Day: {dateInfo.day.long} ({dateInfo.day.short})</p>
-          <p>last day: {dateInfo.day.daysInMonth}</p>
-          <p>Month: {dateInfo.month.long} ({dateInfo.month.short})</p>
-          <p>Year: {dateInfo.year}</p>
-          <p>Day of month: {dateInfo.dayOfMonth}</p>
-          <p>Time: {dateInfo.time.hours}:{dateInfo.time.minutes}:{dateInfo.time.seconds}</p>
-        </div>
-        } */}
-        
 
       </div>
 

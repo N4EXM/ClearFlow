@@ -1,12 +1,15 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import { data, useNavigate } from 'react-router-dom'
 import NewTaskCard from '../components/Project/NewTaskCard'
 import ProjectTaskCard from '../components/Project/ProjectTaskCard'
 import { useEffect, useState} from 'react'
 
 const Project = ({loading}) => {
 
+  // navigation
   const navigate = useNavigate()
+
+  // toggles
   const [isWarningBoxActive, setIsWarningBoxActive] = useState(false) // activates the warning dialogue box
   const [isNewTaskActive, setIsNewTaskActive] = useState(false) // activates the new task card for the project
 
@@ -15,21 +18,52 @@ const Project = ({loading}) => {
   const [projectDueDate, setProjectDueDate] = useState("")
   
   // tasks details
-  const [taskTitle, setTaskTitle] = useState("")
-  const [taskDesc, setTaskDesc] = useState("")
-  const [taskDueDate, setTaskDueDate] = useState("")
   const [tasks, setTasks] = useState([])
 
-  const handleAddingTasks = (title, desc, date, formattedDate) => {
+  const handleAddingTasks = (title, desc, date) => {
+
     const newTask = {
-      title: title,
-      desc: desc,
+      taskId: tasks.length + 1,
+      title: title, 
+      description: desc,
       date: date,
-      formattedDate: formattedDate
+      formattedDate: handleFormatDate(date),
+      completed: false
     }
     setTasks([...tasks, newTask])
-    console.log(tasks)
+    setIsNewTaskActive(false)
   }
+
+  // used for setting the formatted date
+  const handleFormatDate = (date) => {
+    const [year, month, day] = date.split("-");
+    return `${day}-${month}-${year}`
+  }
+
+  const handleEditingTasks = (id, title, desc, date) => {
+
+    const editedTask = {
+      taskId: id,
+      title: title,
+      description: desc,
+      date: date,
+      formattedDate: handleFormatDate(date),
+      completed: false
+    }
+
+    setTasks(tasks.map(task =>
+      task.taskId === id ? {...editedTask} : task
+    ))
+
+  }
+
+  // useEffect(() => {
+  //   console.log("tasks date",tasks[0].date)
+  // }, [tasks])
+
+  // useEffect(() => {
+  //   console.log("tasks",tasks)
+  // }, [tasks])
 
   return (
     <div
@@ -107,14 +141,25 @@ const Project = ({loading}) => {
             className='flex flex-col w-full gap-5'
           >
             <div
-              className='w-full flex flex-col gap-1 pr-1'
+              className='w-full flex flex-col gap-1 pr-1 relative'
             >
               <input 
                 type="text" 
                 placeholder='Project Name'
-                className='border-none bg-transparent font-bold text-2xl outline-none w-full placeholder:text-DText'  
+                value={ProjectTitle}
+                onChange={(e) => setProjectTitle(e.target.value)}
+                className='border-none bg-transparent font-bold text-2xl outline-none w-full placeholder:text-DText first-letter:uppercase'  
               />
-              <span className='w-full h-0.5 bg-separator'></span>
+              {/* <span className='w-full h-0.5 bg-separator rounded-full'></span> */}
+              <button
+                onClick={() => setProjectTitle("")}
+                className='w-fit h-fit p-2 absolute right-0 top-0.5 text-rose-400'
+              >
+                <svg  xmlns="http://www.w3.org/2000/svg" width="20" height="20"  
+                  fill="currentColor" viewBox="0 0 24 24" >
+                  <path d="m7.76 14.83-2.83 2.83 1.41 1.41 2.83-2.83 2.12-2.12.71-.71.71.71 1.41 1.42 3.54 3.53 1.41-1.41-3.53-3.54-1.42-1.41-.71-.71 5.66-5.66-1.41-1.41L12 10.59 6.34 4.93 4.93 6.34 10.59 12l-.71.71z"></path>
+                </svg>
+              </button>
             </div>
 
             <div
@@ -124,7 +169,7 @@ const Project = ({loading}) => {
                 type="date" 
                 className='text-CText border-none bg-transparent font-bold outline-none w-full'  
               />
-              <span className='w-full h-0.5 bg-separator'></span>
+              {/* <span className='w-full h-0.5 bg-separator rounded-full'></span> */}
             </div>
             
           </div>
@@ -142,36 +187,40 @@ const Project = ({loading}) => {
               >
                 Tasks
               </p>
-              <span className='w-full h-0.5 bg-separator'></span>
+              <span className='w-full h-0.5 bg-separator rounded-full'></span>
             </div>
 
             {/* current tasks for the project */}
-            <div>
+            <div
+              className='flex flex-col gap-3'
+            >
               {
                 tasks.length > 0
-                  ? <div>
-                      <TaskCard/>
-                    </div> 
-                  : <p className={`font-semibold text-DText hidden ${isNewTaskActive ? "hidden" : "block"}`}>
+                  ? tasks.map((task) => (
+                    <div
+                      key={task.taskId}
+                      className='flex flex-row items-start justify-start gap-2'
+                    >
+                      <span
+                        className='p-1 rounded-full border border-Pr min-w-6 text-[0.6rem] h-fit flex items-center bg-BGS font-medium justify-center mt-2'
+                      >
+                        {task.taskId}
+                      </span>
+                      <ProjectTaskCard
+                        id={task.taskId}
+                        title={task.title}
+                        description={task.description}
+                        date={task.date}
+                        handleEditingTasks={handleEditingTasks}
+                      />
+                    </div>
+                      
+                    ))
+                      
+                  : <p className={`font-semibold text-DText ${isNewTaskActive ? "hidden" : "block"}`}>
                       No tasks have been created
                     </p>
               }
-              <div
-                className='flex flex-row items-start justify-start gap-2'
-              >
-                <span
-                  className='p-1 rounded-full border border-Pr min-w-6 text-[0.6rem] h-fit flex items-center bg-BGS font-medium justify-center mt-2'
-                >
-                  1
-                </span>
-                <ProjectTaskCard
-                  id={0}
-                  title={"Fix the Auth system"}
-                  desc={"Fix the login function, the logout function, the Register function and the check-auth function."}
-                  date={"2025-05-22"}
-                />
-
-              </div>
               
             
               <div

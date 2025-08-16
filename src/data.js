@@ -4,7 +4,6 @@ export const mockProjects = [
         name: "Todo App",
         date: "22/09/25",
         percentage: 20,
-        tasks: [0, 1, 2] // contains the task id associated with the project
     }
 ]
 
