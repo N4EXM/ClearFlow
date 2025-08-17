@@ -153,7 +153,7 @@ const Project = ({loading}) => {
               {/* <span className='w-full h-0.5 bg-separator rounded-full'></span> */}
               <button
                 onClick={() => setProjectTitle("")}
-                className='w-fit h-fit p-2 absolute right-0 top-0.5 text-rose-400'
+                className={`w-fit h-fit p-2 absolute right-0 top-0.5 text-rose-400 ${ProjectTitle.length > 0 ? "block" : "hidden"}`}
               >
                 <svg  xmlns="http://www.w3.org/2000/svg" width="20" height="20"  
                   fill="currentColor" viewBox="0 0 24 24" >

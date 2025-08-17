@@ -5,7 +5,6 @@ const NewTaskCard = ({setIsNewTaskActive, handleAddingTasks}) => {
     const [title, setTitle] = useState("")
     const [desc, setDesc] = useState("")
     const [date, setDate] = useState("")
-    const [formattedDate, setFormattedDate] = useState("")
 
     const handleTitleChange = (e) => {
         const value = e.target.value;
@@ -13,13 +12,6 @@ const NewTaskCard = ({setIsNewTaskActive, handleAddingTasks}) => {
             setTitle(value);
         }
         // If length exceeds maxLength, don't update the state
-    }
-
-    const handleDateChange = (e) => {
-        const date = e.target.value
-        setDate(date)
-        const [year, month, day] = date.split("-");
-        setFormattedDate(`${day}-${month}-${year}`)
     }
 
     const handleNewTaskClose = () => {

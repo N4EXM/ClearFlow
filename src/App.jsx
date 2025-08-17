@@ -16,27 +16,42 @@ import EditProject from './pages/EditProject'
 import CalendarPage from './pages/CalendarPage'
 import Navbar from './components/Navbar'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import {getProjects, getTasks} from './database/db'
-
+import { getAllTasks, getAllProjects } from './database/tasksOperations'
 
 function App() {
 
-  // database functions
-  // const { isInitialised, projects, tasks } = useDatabase()
-
   // toggles 
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false) // lets the application load
 
-  // tasks details
-  const [currentProjects, setCurrentProjects] = useState(getProjects())
-  const [currentTasks, setCurrentTasks] = useState(getTasks())
- 
+  // app data
+  const [currentProjects, setCurrentProjects] = useState(null)
+  const [currentTasks, setCurrentTasks] = useState(null)
+
   // lets all the stuff load first
   useEffect(() => {
     setTimeout(() => {
-      setLoading(true)
+      setLoading(loadData())
     }, 3000)
   }, [])
+
+  const loadData = async () => {
+    
+    const tasks = await getAllTasks()
+    const projects = await getAllProjects()
+
+    setCurrentTasks(tasks)
+    setCurrentProjects(projects)
+
+    return true
+
+  }
+
+
+  useEffect(() => {
+    console.log("tasks: ", currentTasks)
+    console.log("projects", currentProjects)
+  }, [currentProjects, currentTasks])
+
 
   return (
     <div
@@ -75,7 +90,9 @@ function App() {
               ? <CalendarPage
                   loading={loading}
                   projects={currentProjects}
-                  tasks={currentTasks}
+                  currentTasks={currentTasks}
+                  setCurrentTasks={setCurrentTasks}
+                  loadData={loadData}
                 />
               : <LoadingPage/>
             }

@@ -1,6 +1,33 @@
-import React from 'react'
+import React, { useState } from 'react'
 
-const NewCalendarTaskCard = () => {
+const NewCalendarTaskCard = ({setIsNewTaskActive, handleAddTask}) => {
+
+    // task details
+    const [title, setTitle] = useState("")
+    const [description, setDescription] = useState("")
+
+    // task functions
+
+    const handleTitleChange = (e) => {
+        const value = e.target.value;
+        if (value.length <= 28) {
+            setTitle(value);
+        }
+        // If length exceeds maxLength, don't update the state
+    }
+
+    const closeTaskCard = () => {
+        setTitle("")
+        setDescription("")
+
+        setIsNewTaskActive(false)
+    }
+
+    const handleAddingTask = () => {
+        handleAddTask(title, description)
+        closeTaskCard()
+    } 
+
   return (
     <div
         className='w-full min-h-24 h-full bg-BGS rounded-md px-4 py-4 pt-3 flex flex-col justify-between'
@@ -10,13 +37,15 @@ const NewCalendarTaskCard = () => {
             className='w-fit h-full flex flex-col gap-1'
         >
             <input 
-                readOnly
+                value={title}
+                onChange={(e) => handleTitleChange(e)}
                 type="text" 
                 placeholder='Task title...'
-                className='w-40 outline-none text-sm font-medium placeholder:text-DText'
+                className='w-56 outline-none text-sm font-medium placeholder:text-DText'
             />
             <textarea 
-                readOnly
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
                 type="text"
                 placeholder='Task description...'
                 className='w-56 min-h-12 h-full resize-none no-scrollbar outline-none text-xs font-medium placeholder:text-DText'
@@ -32,6 +61,7 @@ const NewCalendarTaskCard = () => {
             >
                 
                 <button
+                    onClick={() => closeTaskCard()}
                     className='p-1.5 rounded bg-rose-500'
                 >
                     <svg  xmlns="http://www.w3.org/2000/svg" width="20" height="20"  
@@ -40,6 +70,7 @@ const NewCalendarTaskCard = () => {
                     </svg>
                 </button>
                 <button
+                    onClick={() => handleAddingTask()}
                     className='p-1.5 rounded bg-Pr'
                 >
                     <svg  xmlns="http://www.w3.org/2000/svg" width="20" height="20"  

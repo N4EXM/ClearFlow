@@ -31,6 +31,22 @@ export function getDateInDMY_Format(currentYear, currentMonth, currentDay) {
 
 }
 
+export function getDateInYMD_Format(currentYear, currentMonth, currentDay) {
+    const date = new Date(currentYear, currentMonth, currentDay)
+
+    // Extract day, month, and year
+    let day = date.getDate();
+    let month = date.getMonth() + 1;
+    let year = date.getFullYear();
+
+    day = day < 10 ? '0' + day : day;
+    month = month < 10 ? '0' + month : month;
+
+    // Format the date as dd/mm/yyyy
+    return `${year}/${month}/${day}`;
+
+}
+
 export function getCurrentDayInMonthIndex (year, month, day) {
     // return new Date(year, month, day).toLocaleDateString("en-GB", { weekday: "short" })
     return new Date(year, month, day).getDay()

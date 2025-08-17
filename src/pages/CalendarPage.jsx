@@ -1,15 +1,20 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { getCurrentMonth, getCurrentDate, getCurrentDayInMonthIndex, getCurrentYear, getDaysInMonth, getDateInDMY_Format } from '../utils/dateUtils'
+import { getCurrentMonth, getCurrentDate, getCurrentDayInMonthIndex, getCurrentYear, getDaysInMonth, getDateInDMY_Format, getDateInYMD_Format } from '../utils/dateUtils'
 import CalendarBtn from '../components/calendar/CalendarBtn'
 import NewCalendarTaskCard from '../components/calendar/NewCalendarTaskCard'
 import TaskCard from '../components/calendar/TaskCard'
+import { mockTasks } from '../data'
+import { addTask } from '../database/tasksOperations'
 
-const CalendarPage = ({loading, mockTasks, mockProjects}) => {
+
+const CalendarPage = ({loading, projects, currentTasks, setCurrentTasks, loadData}) => {
 
     const [error, setError] = useState("")
-    const [tasks] = useState(mockTasks)
-    const [projects, setProjects] = useState(mockProjects)
-    // const dateInfo = useCurrentDateInfo()
+
+    // database functions
+
+    // toggles
+    const [isNewTaskActive, setIsNewTaskActive] = useState(false)
 
     const [loadedTasks, setLoadedTasks] = useState([]) // contains the tasks of the current date
     const months = [
@@ -130,14 +135,32 @@ const CalendarPage = ({loading, mockTasks, mockProjects}) => {
     // loads the tasks associated with the selected date
     const handleTasksDateChange = (date) => {
 
-      if (!tasks || !Array.isArray(tasks)) return;
+      if (!currentTasks || !Array.isArray(currentTasks)) return;
   
-      const filteredTasks = tasks.filter(task => {
+      const filteredTasks = currentTasks.filter(task => {
         // Assuming each task has a date property in the same format as getDateInDMY_Format returns
-        return task.date === date;
+        return task.formattedDate === date;
       });
   
       setLoadedTasks(filteredTasks);
+
+    }
+
+    // handles adding a task to the database
+    const handleAddTask = async (title, desc) => {
+
+      const newTask = {
+        taskId: tasks.length === 1 ? 0 : tasks.length + 1 ,
+        title: title,
+        description: desc,
+        date: getDateInYMD_Format(selectedYear, selectedMonth, selectedDate),
+        formattedDate: getDateInDMY_Format(selectedYear, selectedMonth, selectedDate),
+        completed: false,
+        projectId: null
+      }
+
+      await addTask(newTask)
+      setCurrentTasks(...tasks, newTask)
 
     }
 
@@ -190,7 +213,12 @@ const CalendarPage = ({loading, mockTasks, mockProjects}) => {
         const formattedDate = getDateInDMY_Format(selectedYear, selectedMonth, selectedDate);
         handleTasksDateChange(formattedDate);
       }
-    }, [selectedDate, selectedMonth, selectedYear, tasks]);
+    }, [selectedDate, selectedMonth, selectedYear, currentTasks]);
+
+    useEffect(() => {
+      loadData()
+    }, [])
+
 
   return (
     <div
@@ -290,7 +318,9 @@ const CalendarPage = ({loading, mockTasks, mockProjects}) => {
                 }
               </p>
             </div>
-            <button>
+            <button
+              onClick={() => setIsNewTaskActive(true)}
+            >
               <svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
                 fill="currentColor" viewBox="0 0 24 24" >
                 <path d="M3 13h8v8h2v-8h8v-2h-8V3h-2v8H3z"></path>
@@ -324,7 +354,7 @@ const CalendarPage = ({loading, mockTasks, mockProjects}) => {
                   </div> 
                 ))
               : <div
-                  className='w-full h-full'
+                  className={`w-full h-full ${isNewTaskActive && "hidden"}`}
                 >
                   <p
                     className='font-medium text-CText/70 text-sm '
@@ -345,6 +375,20 @@ const CalendarPage = ({loading, mockTasks, mockProjects}) => {
               </span>
               <NewTaskCard/>
             </div> */}
+
+            <div
+              className={`flex flex-row items-start justify-start gap-2 ${isNewTaskActive ? "flex" : "hidden"}`}
+            >
+              <span
+                className='p-1 rounded-full border border-Pr min-w-6 text-[0.6rem] h-fit flex items-center bg-BGS font-medium justify-center mt-2'
+              >
+                {loadedTasks.length + 1}
+              </span>
+              <NewCalendarTaskCard
+                setIsNewTaskActive={setIsNewTaskActive}
+                handleAddTask={handleAddTask}
+              />
+            </div>
 
           </div>
 
