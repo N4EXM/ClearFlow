@@ -21,10 +21,10 @@ export async function updateTask(id, updates) {
 
 }
 
-export async function deleteTask(id) {
+export async function deleteTask(taskId) {
     
     const db = await getDB()
-    return db.delete("tasks", id)
+    return db.delete("tasks", taskId)
 
 }
 

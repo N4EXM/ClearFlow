@@ -4,7 +4,7 @@ import CalendarBtn from '../components/calendar/CalendarBtn'
 import NewCalendarTaskCard from '../components/calendar/NewCalendarTaskCard'
 import TaskCard from '../components/calendar/TaskCard'
 import { mockTasks } from '../data'
-import { addTask } from '../database/tasksOperations'
+import { addTask, deleteTask } from '../database/tasksOperations'
 
 
 const CalendarPage = ({loading, projects, currentTasks, setCurrentTasks, loadData}) => {
@@ -150,7 +150,7 @@ const CalendarPage = ({loading, projects, currentTasks, setCurrentTasks, loadDat
     const handleAddTask = async (title, desc) => {
 
       const newTask = {
-        taskId: tasks.length === 1 ? 0 : tasks.length + 1 ,
+        taskId: currentTasks.length === 1 ? 0 : currentTasks.length + 1 ,
         title: title,
         description: desc,
         date: getDateInYMD_Format(selectedYear, selectedMonth, selectedDate),
@@ -160,7 +160,19 @@ const CalendarPage = ({loading, projects, currentTasks, setCurrentTasks, loadDat
       }
 
       await addTask(newTask)
-      setCurrentTasks(...tasks, newTask)
+      setCurrentTasks(...currentTasks, newTask)
+      loadData()
+
+    }
+
+    // deleteTask function 
+    const handleDeleteTask = async (id) => {
+
+      await deleteTask(id)
+
+      setCurrentTasks(
+        currentTasks.filter(task => id !== task.taskId)
+      )
 
     }
 
@@ -350,6 +362,7 @@ const CalendarPage = ({loading, projects, currentTasks, setCurrentTasks, loadDat
                         title={task.title}
                         description={task.description}
                         projectName={task.projectName}
+                        deleteFunction={() => handleDeleteTask(task.taskId)}
                       /> 
                   </div> 
                 ))
