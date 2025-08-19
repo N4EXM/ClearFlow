@@ -4,7 +4,7 @@ import CalendarBtn from '../components/calendar/CalendarBtn'
 import NewCalendarTaskCard from '../components/calendar/NewCalendarTaskCard'
 import TaskCard from '../components/calendar/TaskCard'
 import { mockTasks } from '../data'
-import { addTask, deleteTask } from '../database/tasksOperations'
+import { addTask, deleteTask, updateTask } from '../database/tasksOperations'
 
 
 const CalendarPage = ({loading, projects, currentTasks, setCurrentTasks, loadData}) => {
@@ -16,6 +16,7 @@ const CalendarPage = ({loading, projects, currentTasks, setCurrentTasks, loadDat
     // toggles
     const [isNewTaskActive, setIsNewTaskActive] = useState(false)
 
+    // month hooks
     const [loadedTasks, setLoadedTasks] = useState([]) // contains the tasks of the current date
     const months = [
       {
@@ -107,9 +108,11 @@ const CalendarPage = ({loading, projects, currentTasks, setCurrentTasks, loadDat
     const [selectedDate, setSelectedDate] = useState(today)
     const [selectedDayIndex, setSelectedDayIndex] = useState(getCurrentDayInMonthIndex(selectedYear, selectedMonth , selectedDate))
 
+    // calendar button refs
     const scrollContainerRef = useRef(null);
     const dateButtonRefs = useRef([]);
 
+    // changes the current date to the selected date
     const handleCalendarBtnChange = (index) => {
       setSelectedDate(index)
     }
@@ -176,6 +179,27 @@ const CalendarPage = ({loading, projects, currentTasks, setCurrentTasks, loadDat
 
     }
 
+    // update task function
+    const handleUpdateTask = async (id, title, description, date, formattedDate, completed, projectId) => {
+
+      const updatedTask = {
+        taskId: id,
+        title: title,
+        description: description,
+        date: date,
+        formattedDate: formattedDate,
+        completed: completed,
+        projectId: projectId
+      }
+
+      await updateTask(id, updatedTask)
+
+      setCurrentTasks(prev => prev.map(prev => prev.taskId === updateTask.taskId ? updateTask : prev))
+
+      loadData()
+
+    }
+
     // changes the days to the current month
     useEffect(() => {
       setDaysInMonth(getDaysInMonth(selectedYear, selectedMonth))
@@ -220,6 +244,7 @@ const CalendarPage = ({loading, projects, currentTasks, setCurrentTasks, loadDat
       }
     }, [selectedMonth])
 
+    // loads the current tasks related to the choosen date
     useEffect(() => {
       if (selectedDate) {
         const formattedDate = getDateInDMY_Format(selectedYear, selectedMonth, selectedDate);
@@ -227,6 +252,7 @@ const CalendarPage = ({loading, projects, currentTasks, setCurrentTasks, loadDat
       }
     }, [selectedDate, selectedMonth, selectedYear, currentTasks]);
 
+    // just loads new data to the array if anything happens
     useEffect(() => {
       loadData()
     }, [])
@@ -237,16 +263,19 @@ const CalendarPage = ({loading, projects, currentTasks, setCurrentTasks, loadDat
       className='flex flex-col bg-Pr min-h-[80vh] h-fit w-full text-CText duration-200 relative font-poppins'
     >
       
+      {/* greeting */}
       <p
         className={`text-lg font-semibold opacity-0 duration-200 ${loading && "opacity-100"} p-7`}
       >
         Hello Naeem
       </p>
 
+
       <div
         className='bg-BG p-7 rounded-tr-[2.5rem] flex flex-col gap-8 w-full min-h-[80vh] h-full pb-28'
       >
         
+        {/* states the current month and year and change month buttons */}
         <div
           className='flex flex-row items-center justify-between w-full'
         >
@@ -359,9 +388,14 @@ const CalendarPage = ({loading, projects, currentTasks, setCurrentTasks, loadDat
                       {index + 1}
                     </span>
                       <TaskCard
+                        id={task.taskId}
                         title={task.title}
                         description={task.description}
-                        projectName={task.projectName}
+                        date={task.date}
+                        formattedDate={task.formattedDate}
+                        completed={task.completed}
+                        projectId={task.projectId}
+                        updateFunction={handleUpdateTask}
                         deleteFunction={() => handleDeleteTask(task.taskId)}
                       /> 
                   </div> 
