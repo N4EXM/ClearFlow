@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { data, useNavigate } from 'react-router-dom'
 import NewTaskCard from '../components/Project/NewTaskCard'
 import ProjectTaskCard from '../components/Project/ProjectTaskCard'
@@ -13,13 +13,19 @@ const Project = ({loading}) => {
   const [isWarningBoxActive, setIsWarningBoxActive] = useState(false) // activates the warning dialogue box
   const [isNewTaskActive, setIsNewTaskActive] = useState(false) // activates the new task card for the project
 
+  // errors
+  const [projectNameError, setProjectNameError] = useState(false)
+  const [projectDueDateError, setProjectDueDateError] = useState(false)
+  const [taskListError, setTaskListError] = useState(false) 
+
   // project details
-  const [ProjectTitle, setProjectTitle] = useState("")
+  const [projectTitle, setProjectTitle] = useState("")
   const [projectDueDate, setProjectDueDate] = useState("")
   
-  // tasks details
+  // tasks list
   const [tasks, setTasks] = useState([])
 
+  // function to add tasks
   const handleAddingTasks = (title, desc, date) => {
 
     const newTask = {
@@ -40,6 +46,7 @@ const Project = ({loading}) => {
     return `${day}-${month}-${year}`
   }
 
+  // handles changing details of the tasks
   const handleEditingTasks = (id, title, desc, date) => {
 
     const editedTask = {
@@ -57,19 +64,30 @@ const Project = ({loading}) => {
 
   }
 
-  // useEffect(() => {
-  //   console.log("tasks date",tasks[0].date)
-  // }, [tasks])
+  const handleCreatingProject = () => {
 
-  // useEffect(() => {
-  //   console.log("tasks",tasks)
-  // }, [tasks])
+    if (projectTitle.length === 0 ) {
+      setProjectNameError(true)
+    } 
+    if (projectDueDate === "") {
+      setProjectDueDateError(true)
+      console.log(projectDueDate)
+    }
+    if (tasks.length === 0) {
+      setTaskListError(true)
+    }
+    if (projectNameError === false && projectDueDateError === false && tasks.length > 0) {
+      console.log(true)
+    }
+  }
+
 
   return (
     <div
       className={`relative font-poppins text-CText`}
     >
 
+      {/* alert box */}
       <div
         className={`${isWarningBoxActive ? "flex" : "hidden"} flex-col gap-5 p-3 pt-4 bg-BGS rounded-md border border-Pr absolute top-1/2 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 w-3/4 min-h-1/5 h-fit opacity-100 duration-300`}
       >
@@ -145,31 +163,45 @@ const Project = ({loading}) => {
             >
               <input 
                 type="text" 
-                placeholder='Project Name'
-                value={ProjectTitle}
+                placeholder='Project Name...'
+                value={projectTitle}
+                onClick={() => setProjectNameError(false)}
                 onChange={(e) => setProjectTitle(e.target.value)}
-                className='border-none bg-transparent font-bold text-2xl outline-none w-full placeholder:text-DText first-letter:uppercase'  
+                className={`border-none bg-transparent font-bold text-2xl outline-none w-full placeholder:text-DText first-letter:uppercase ${projectNameError && "placeholder:text-rose-500/70"}`}
               />
               {/* <span className='w-full h-0.5 bg-separator rounded-full'></span> */}
               <button
                 onClick={() => setProjectTitle("")}
-                className={`w-fit h-fit p-2 absolute right-0 top-0.5 text-rose-400 ${ProjectTitle.length > 0 ? "block" : "hidden"}`}
+                className={`w-fit h-fit p-2 absolute right-0 top-0.5 text-rose-400 ${projectTitle.length > 0 ? "block" : "hidden"}`}
               >
                 <svg  xmlns="http://www.w3.org/2000/svg" width="20" height="20"  
                   fill="currentColor" viewBox="0 0 24 24" >
                   <path d="m7.76 14.83-2.83 2.83 1.41 1.41 2.83-2.83 2.12-2.12.71-.71.71.71 1.41 1.42 3.54 3.53 1.41-1.41-3.53-3.54-1.42-1.41-.71-.71 5.66-5.66-1.41-1.41L12 10.59 6.34 4.93 4.93 6.34 10.59 12l-.71.71z"></path>
                 </svg>
               </button>
+              <i
+                className={`${projectNameError ? "block" : "hidden"} absolute top-1.5 text-rose-500 right-2`}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none"><path d="m12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035q-.016-.005-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093q.019.005.029-.008l.004-.014l-.034-.614q-.005-.018-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"/><path fill="currentColor" d="m13.299 3.148l8.634 14.954a1.5 1.5 0 0 1-1.299 2.25H3.366a1.5 1.5 0 0 1-1.299-2.25l8.634-14.954c.577-1 2.02-1 2.598 0M12 4.898L4.232 18.352h15.536zM12 15a1 1 0 1 1 0 2a1 1 0 0 1 0-2m0-7a1 1 0 0 1 1 1v4a1 1 0 1 1-2 0V9a1 1 0 0 1 1-1"/></g></svg>
+              </i>
             </div>
 
             <div
-              className='w-full flex flex-col gap-1 pr-1'
+              className='w-full flex flex-col gap-1 pr-1 relative'
             >
               <input 
                 type="date" 
-                className='text-CText border-none bg-transparent font-bold outline-none w-full'  
+                value={projectDueDate}
+                onChange={(e) => setProjectDueDate(e.target.value)}
+                className={`text-CText border-none bg-transparent font-semibold outline-none w-full ${projectDueDateError && "text-rose-500/70"}`} 
+                onClick={() => setProjectDueDateError(false)}
               />
               {/* <span className='w-full h-0.5 bg-separator rounded-full'></span> */}
+              <i  
+                className={`${projectDueDateError ? "block" : "hidden"} absolute -top-1.5 text-rose-500 right-0 p-2 bg-BG`}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none"><path d="m12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035q-.016-.005-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093q.019.005.029-.008l.004-.014l-.034-.614q-.005-.018-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"/><path fill="currentColor" d="m13.299 3.148l8.634 14.954a1.5 1.5 0 0 1-1.299 2.25H3.366a1.5 1.5 0 0 1-1.299-2.25l8.634-14.954c.577-1 2.02-1 2.598 0M12 4.898L4.232 18.352h15.536zM12 15a1 1 0 1 1 0 2a1 1 0 0 1 0-2m0-7a1 1 0 0 1 1 1v4a1 1 0 1 1-2 0V9a1 1 0 0 1 1-1"/></g></svg>
+              </i>
             </div>
             
           </div>
@@ -217,9 +249,20 @@ const Project = ({loading}) => {
                       
                     ))
                       
-                  : <p className={`font-semibold text-DText ${isNewTaskActive ? "hidden" : "block"}`}>
-                      No tasks have been created
-                    </p>
+                  : 
+                    <div
+                      className='flex flex-row items-center justify-between w-full'
+                    >
+                      <p className={`font-semibold text-DText ${isNewTaskActive ? "hidden" : "block"} ${taskListError && "text-rose-500/70"}`}>
+                        No tasks have been created
+                      </p>
+                      
+                      {
+                        taskListError 
+                        && <svg className='text-rose-500/70' xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><g fill="none"><path d="m12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035q-.016-.005-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093q.019.005.029-.008l.004-.014l-.034-.614q-.005-.018-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"/><path fill="currentColor" d="m13.299 3.148l8.634 14.954a1.5 1.5 0 0 1-1.299 2.25H3.366a1.5 1.5 0 0 1-1.299-2.25l8.634-14.954c.577-1 2.02-1 2.598 0M12 4.898L4.232 18.352h15.536zM12 15a1 1 0 1 1 0 2a1 1 0 0 1 0-2m0-7a1 1 0 0 1 1 1v4a1 1 0 1 1-2 0V9a1 1 0 0 1 1-1"/></g></svg>
+                      }
+                    </div>
+                  
               }
               
             
@@ -241,11 +284,12 @@ const Project = ({loading}) => {
 
           </div>
 
+          {/* add new task button and create project */}
           <div
             className='absolute bottom-0 p-5 left-0 flex flex-row items-center justify-end gap-2 w-full '
           >
             <button
-              onClick={() => setIsNewTaskActive(true)}
+              onClick={() => {setIsNewTaskActive(true), setTaskListError(false)}}
               className='bg-Pr rounded-full p-2.5'
             >    
               <svg  xmlns="http://www.w3.org/2000/svg" width="28" height="28"  
@@ -254,6 +298,7 @@ const Project = ({loading}) => {
               </svg>
             </button>
             <button
+              onClick={() => handleCreatingProject()}
               className='bg-Pr rounded-full p-2.5'
             >    
               <svg  xmlns="http://www.w3.org/2000/svg" width="28" height="28"  

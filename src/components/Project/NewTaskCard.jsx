@@ -60,7 +60,7 @@ const NewTaskCard = ({setIsNewTaskActive, handleAddingTasks}) => {
                 <input 
                     type="date" 
                     value={date}
-                    onChange={(e) => handleDateChange(e)}
+                    onChange={(e) => setDate(e.target.value)}
                     className='w-fit text-xs font-medium text-DText outline-none'
                 />
                 <div

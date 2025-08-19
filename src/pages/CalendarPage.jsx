@@ -395,6 +395,7 @@ const CalendarPage = ({loading, projects, currentTasks, setCurrentTasks, loadDat
                         formattedDate={task.formattedDate}
                         completed={task.completed}
                         projectId={task.projectId}
+                        projectName={task.projectName}
                         updateFunction={handleUpdateTask}
                         deleteFunction={() => handleDeleteTask(task.taskId)}
                       /> 

@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react'
 
 
 
-const TaskCard = ({id, title, description, date, formattedDate, completed, projectId, deleteFunction, updateFunction}) => {
+const TaskCard = ({id, title, description, date, formattedDate, completed, projectId, projectName, deleteFunction, updateFunction}) => {
 
     // toggles
     const [isCompleted, setIsCompleted] = useState(completed || false)
@@ -81,8 +81,7 @@ const TaskCard = ({id, title, description, date, formattedDate, completed, proje
                 <p
                     className='text-xs font-medium text-DText'
                 >
-                    {/* {projectName} */}
-                    Todo App
+                    {projectName}
                 </p>
                 
                 {
