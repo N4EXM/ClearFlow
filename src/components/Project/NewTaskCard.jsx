@@ -23,6 +23,9 @@ const NewTaskCard = ({setIsNewTaskActive, handleAddingTasks, minDate, maxDate}) 
     }
 
     const addingTask = () => {
+
+        if (title === "" || desc === "" || date === "")
+
         handleAddingTasks(title, desc, date)
         handleNewTaskClose()
     }
