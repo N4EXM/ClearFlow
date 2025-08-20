@@ -15,7 +15,7 @@ import Project from './pages/Project'
 import EditProject from './pages/EditProject'
 import CalendarPage from './pages/CalendarPage'
 import Navbar from './components/Navbar'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom'
 import { getAllTasks, getAllProjects } from './database/tasksOperations'
 
 function App() {
@@ -76,8 +76,8 @@ function App() {
             element={
               loading
               ? <Project
-                  projects={currentProjects}
-                  tasks={currentTasks}
+                  currentProjects={currentProjects}
+                  currentTasks={currentTasks}
                   loading={loading}
                 />
               : <LoadingPage/>
@@ -89,7 +89,7 @@ function App() {
               loading
               ? <CalendarPage
                   loading={loading}
-                  projects={currentProjects}
+                  currentProjects={currentProjects}
                   currentTasks={currentTasks}
                   setCurrentTasks={setCurrentTasks}
                   loadData={loadData}

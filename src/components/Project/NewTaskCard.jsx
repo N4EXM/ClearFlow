@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
 
-const NewTaskCard = ({setIsNewTaskActive, handleAddingTasks}) => {
+const NewTaskCard = ({setIsNewTaskActive, handleAddingTasks, minDate, maxDate}) => {
 
     const [title, setTitle] = useState("")
     const [desc, setDesc] = useState("")
     const [date, setDate] = useState("")
+    const [currentProjectDate, setCurrentProjectDate] = useState(maxDate || "")
 
     const handleTitleChange = (e) => {
         const value = e.target.value;
@@ -25,6 +26,12 @@ const NewTaskCard = ({setIsNewTaskActive, handleAddingTasks}) => {
         handleAddingTasks(title, desc, date)
         handleNewTaskClose()
     }
+
+    useEffect(() => {
+        if (maxDate !== currentProjectDate) {
+            setDate("")
+        }
+    }, [maxDate])
 
   return (
     <div
@@ -60,6 +67,8 @@ const NewTaskCard = ({setIsNewTaskActive, handleAddingTasks}) => {
                 <input 
                     type="date" 
                     value={date}
+                    min={minDate}
+                    max={maxDate}
                     onChange={(e) => setDate(e.target.value)}
                     className='w-fit text-xs font-medium text-DText outline-none'
                 />

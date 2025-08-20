@@ -14,6 +14,32 @@ export async function getAllTasks() {
 
 }
 
+// db.js
+export async function addMultipleTasks(tasksArray) {
+  try {
+    const db = await dbPromise;
+    const tx = db.transaction('tasks', 'readwrite');
+    const store = tx.objectStore('tasks');
+
+    const results = [];
+    
+    for (const task of tasksArray) {
+      try {
+        const id = await store.add(task);
+        results.push({ success: true, id, task });
+      } catch (error) {
+        results.push({ success: false, error: error.message, task });
+      }
+    }
+
+    await tx.done;
+    return results;
+    
+  } catch (error) {
+    throw new Error(`Bulk operation failed: ${error.message}`);
+  }
+}
+
 export async function updateTask(id, updates) {
     
     const db = await getDB()

@@ -15,7 +15,7 @@ const TaskCard = ({id, title, description, date, formattedDate, completed, proje
 
     // toggles the completed status between off and on
     const handleToggle = async () => {   
-        updateFunction(id, newTitle, newDescription, date, formattedDate, !isCompleted, projectId)
+        updateFunction(id, newTitle, newDescription, date, formattedDate, !isCompleted, projectId, projectName)
         setIsCompleted(!isCompleted) 
     }
 
@@ -30,7 +30,7 @@ const TaskCard = ({id, title, description, date, formattedDate, completed, proje
     // handles updating the task
     const handleUpdate = async () => {
 
-        updateFunction(id, newTitle, newDescription, date, formattedDate, completed, projectId)
+        updateFunction(id, newTitle, newDescription, date, formattedDate, completed, projectId, projectName)
         setIsEdit(false)
 
     }
@@ -81,7 +81,7 @@ const TaskCard = ({id, title, description, date, formattedDate, completed, proje
                 <p
                     className='text-xs font-medium text-DText'
                 >
-                    {projectName}
+                    {projectName === null ? "No project" : projectName}
                 </p>
                 
                 {

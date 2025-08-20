@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-const NewCalendarTaskCard = ({setIsNewTaskActive, handleAddTask}) => {
+const NewCalendarTaskCard = ({setIsNewTaskFormActive, handleAddTask}) => {
 
     // task details
     const [title, setTitle] = useState("")
@@ -20,7 +20,7 @@ const NewCalendarTaskCard = ({setIsNewTaskActive, handleAddTask}) => {
         setTitle("")
         setDescription("")
 
-        setIsNewTaskActive(false)
+        setIsNewTaskFormActive(false)
     }
 
     const handleAddingTask = () => {

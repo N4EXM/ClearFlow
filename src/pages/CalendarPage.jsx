@@ -1,449 +1,323 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { getCurrentMonth, getCurrentDate, getCurrentDayInMonthIndex, getCurrentYear, getDaysInMonth, getDateInDMY_Format, getDateInYMD_Format } from '../utils/dateUtils'
+import { 
+  getCurrentMonth, 
+  getCurrentDate, 
+  getCurrentDayInMonthIndex, 
+  getCurrentYear, 
+  getDaysInMonth, 
+  getDateInDMY_Format, 
+  getDateInYMD_Format 
+} from '../utils/dateUtils'
 import CalendarBtn from '../components/calendar/CalendarBtn'
 import NewCalendarTaskCard from '../components/calendar/NewCalendarTaskCard'
 import TaskCard from '../components/calendar/TaskCard'
 import { mockTasks } from '../data'
 import { addTask, deleteTask, updateTask } from '../database/tasksOperations'
 
+const CalendarPage = ({ loading, currentProjects, currentTasks, setCurrentTasks, loadData }) => {
+  const [errorMessage, setErrorMessage] = useState("")
 
-const CalendarPage = ({loading, projects, currentTasks, setCurrentTasks, loadData}) => {
+  // State for managing UI toggles
+  const [isNewTaskFormActive, setIsNewTaskFormActive] = useState(false)
 
-    const [error, setError] = useState("")
+  // Calendar state management
+  const [tasksForSelectedDate, setTasksForSelectedDate] = useState([]) // Tasks for the currently selected date
+  const [selectedMonthIndex, setSelectedMonthIndex] = useState(getCurrentMonth()) // 0-11 (Jan-Dec)
+  const [selectedYear, setSelectedYear] = useState(getCurrentYear()) // e.g., 2025
+  const [daysInSelectedMonth, setDaysInSelectedMonth] = useState(getDaysInMonth(selectedYear, selectedMonthIndex))
+  const [selectedDayOfMonth, setSelectedDayOfMonth] = useState(getCurrentDate())
+  const [selectedDayIndex, setSelectedDayIndex] = useState(getCurrentDayInMonthIndex(selectedYear, selectedMonthIndex, selectedDayOfMonth))
 
-    // database functions
-
-    // toggles
-    const [isNewTaskActive, setIsNewTaskActive] = useState(false)
-
-    // month hooks
-    const [loadedTasks, setLoadedTasks] = useState([]) // contains the tasks of the current date
-    const months = [
-      {
-        fullName: "January",
-        abrName: "Jan"
-      },
-      {
-        fullName: "February",
-        abrName: "Feb"
-      },
-      {
-        fullName: "March",
-        abrName: "Mar"
-      },
-            {
-        fullName: "April",
-        abrName: "Apr"
-      },
-      {
-        fullName: "May",
-        abrName: "May"
-      },
-      {
-        fullName: "June",
-        abrName: "Jun"
-      },
-            {
-        fullName: "July",
-        abrName: "Jul"
-      },
-      {
-        fullName: "August",
-        abrName: "Aug"
-      },
-      {
-        fullName: "September",
-        abrName: "Sep"
-      },
-      {
-        fullName: "October",
-        abrName: "Oct"
-      },
-      {
-        fullName: "November",
-        abrName: "Nov"
-      },
-      {
-        fullName: "December",
-        abrName: "Dec"
-      },
-    ]
-    const days = [
-      {
-        fullName: "Sunday",
-        abrName: "Sun"
-      },
-      {
-        fullName: "Monday",
-        abrName: "Mon"
-      },
-      {
-        fullName: "Tuesday",
-        abrName: "Tue"
-      },
-      {
-        fullName: "Wednesday",
-        abrName: "Wed"
-      },
-      {
-        fullName: "Thursday",
-        abrName: "Thu"
-      },
-      {
-        fullName: "Friday",
-        abrName: "Fri"
-      },
-      {
-        fullName: "Saturday",
-        abrName: "Sat"
-      },
-    ]
-    const today = getCurrentDate()
-    const month =  getCurrentMonth()
-    const year = getCurrentYear()
-
-    const [selectedMonth, setSelectedMonth] = useState(month) // 0 - 12 months
-    const [selectedYear, setSelectedYear] = useState(year) // e.g current year: 2025
-    const [daysInMonth, setDaysInMonth] = useState(getDaysInMonth(selectedYear, selectedMonth))
-    const [selectedDate, setSelectedDate] = useState(today)
-    const [selectedDayIndex, setSelectedDayIndex] = useState(getCurrentDayInMonthIndex(selectedYear, selectedMonth , selectedDate))
-
-    // calendar button refs
-    const scrollContainerRef = useRef(null);
-    const dateButtonRefs = useRef([]);
-
-    // changes the current date to the selected date
-    const handleCalendarBtnChange = (index) => {
-      setSelectedDate(index)
-    }
-
-    // adds or subtracts one from the current month index and changes years
-    const handleMonthChange = (operation) => {
-      if (operation === 1) {
-        setSelectedMonth(selectedMonth + 1)
-        if (selectedMonth > 10) {
-          setSelectedMonth(0)
-          setSelectedYear(selectedYear + 1)
-        }
-      }
-      else {
-        setSelectedMonth(selectedMonth - 1)
-        if (selectedMonth < 1) {
-          setSelectedYear(selectedYear - 1)
-          setSelectedMonth(11)
-        }
-      }      
-    }
-
-    // loads the tasks associated with the selected date
-    const handleTasksDateChange = (date) => {
-
-      if (!currentTasks || !Array.isArray(currentTasks)) return;
+  // Month and day name data
+  const monthNames = [
+    { fullName: "January", abrName: "Jan" },
+    { fullName: "February", abrName: "Feb" },
+    { fullName: "March", abrName: "Mar" },
+    { fullName: "April", abrName: "Apr" },
+    { fullName: "May", abrName: "May" },
+    { fullName: "June", abrName: "Jun" },
+    { fullName: "July", abrName: "Jul" },
+    { fullName: "August", abrName: "Aug" },
+    { fullName: "September", abrName: "Sep" },
+    { fullName: "October", abrName: "Oct" },
+    { fullName: "November", abrName: "Nov" },
+    { fullName: "December", abrName: "Dec" },
+  ]
   
-      const filteredTasks = currentTasks.filter(task => {
-        // Assuming each task has a date property in the same format as getDateInDMY_Format returns
-        return task.formattedDate === date;
+  const dayNames = [
+    { fullName: "Sunday", abrName: "Sun" },
+    { fullName: "Monday", abrName: "Mon" },
+    { fullName: "Tuesday", abrName: "Tue" },
+    { fullName: "Wednesday", abrName: "Wed" },
+    { fullName: "Thursday", abrName: "Thu" },
+    { fullName: "Friday", abrName: "Fri" },
+    { fullName: "Saturday", abrName: "Sat" },
+  ]
+
+  // Current date values for comparison
+  const currentDayOfMonth = getCurrentDate()
+  const currentMonthIndex = getCurrentMonth()
+  const currentYear = getCurrentYear()
+
+  // Refs for calendar navigation and scrolling
+  const calendarScrollContainerRef = useRef(null);
+  const dateButtonRefs = useRef([]);
+
+  // Handler for when a calendar date button is clicked
+  const handleDateSelection = (dayOfMonth) => {
+    setSelectedDayOfMonth(dayOfMonth)
+  }
+
+  // Handler for changing months (next/previous)
+  const handleMonthNavigation = (direction) => {
+    if (direction === 'next') {
+      setSelectedMonthIndex(prevMonthIndex => {
+        const newMonthIndex = prevMonthIndex + 1
+        // If moving past December, go to January of next year
+        if (newMonthIndex > 11) {
+          setSelectedYear(prevYear => prevYear + 1)
+          return 0
+        }
+        return newMonthIndex
+      })
+    } else {
+      setSelectedMonthIndex(prevMonthIndex => {
+        const newMonthIndex = prevMonthIndex - 1
+        // If moving before January, go to December of previous year
+        if (newMonthIndex < 0) {
+          setSelectedYear(prevYear => prevYear - 1)
+          return 11
+        }
+        return newMonthIndex
+      })
+    }      
+  }
+
+  // Filters and loads tasks for the selected date
+  const loadTasksForSelectedDate = (dateString) => {
+    if (!currentTasks || !Array.isArray(currentTasks)) return;
+
+    const filteredTasks = currentTasks.filter(task => {
+      return task.formattedDate === dateString;
+    });
+
+    setTasksForSelectedDate(filteredTasks);
+  }
+
+  // Handler for adding a new task
+  const handleTaskCreation = async (title, description) => {
+    const newTask = {
+      taskId: currentTasks.length === 1 ? 0 : currentTasks.length + 1,
+      title: title,
+      description: description,
+      date: getDateInYMD_Format(selectedYear, selectedMonthIndex, selectedDayOfMonth),
+      formattedDate: getDateInDMY_Format(selectedYear, selectedMonthIndex, selectedDayOfMonth),
+      completed: false,
+      projectId: null,
+      projectName: null
+    }
+
+    await addTask(newTask)
+    setCurrentTasks([...currentTasks, newTask])
+    loadData()
+  }
+
+  // Handler for deleting a task
+  const handleTaskDeletion = async (taskId) => {
+    await deleteTask(taskId)
+    setCurrentTasks(currentTasks.filter(task => taskId !== task.taskId))
+  }
+
+  // Handler for updating a task
+  const handleTaskUpdate = async (taskId, title, description, date, formattedDate, completed, projectId) => {
+    const updatedTask = {
+      taskId: taskId,
+      title: title,
+      description: description,
+      date: date,
+      formattedDate: formattedDate,
+      completed: completed,
+      projectId: projectId,
+      projectName: projectId === null ? "No project" : currentProjects[projectId].projectName
+    }
+
+    await updateTask(taskId, updatedTask)
+    setCurrentTasks(prevTasks => prevTasks.map(task => task.taskId === updatedTask.taskId ? updatedTask : task))
+    loadData()
+  }
+
+  // Effect to update days in month when month or year changes
+  useEffect(() => {
+    setDaysInSelectedMonth(getDaysInMonth(selectedYear, selectedMonthIndex))
+    setSelectedDayIndex(getCurrentDayInMonthIndex(selectedYear, selectedMonthIndex, selectedDayOfMonth));
+  }, [selectedDayOfMonth, selectedMonthIndex, selectedYear]);
+
+  // Effect to scroll to selected date in calendar
+  useEffect(() => {
+    if (calendarScrollContainerRef.current && dateButtonRefs.current[selectedDayOfMonth - 1]) {
+      const container = calendarScrollContainerRef.current;
+      const button = dateButtonRefs.current[selectedDayOfMonth - 1];
+    
+      // Calculate scroll position to center the selected date
+      const containerWidth = container.offsetWidth;
+      const buttonLeft = button.offsetLeft;
+      const buttonWidth = button.offsetWidth;
+    
+      container.scrollTo({
+        left: buttonLeft - (containerWidth / 2) + ((buttonWidth + 140) / 2),
+        behavior: 'smooth'
       });
-  
-      setLoadedTasks(filteredTasks);
-
+    } else {
+      const container = calendarScrollContainerRef.current;
+      container.scrollTo({
+        left: 0,
+        behavior: 'smooth'
+      });
     }
+  }, [selectedMonthIndex, selectedDayOfMonth]);
 
-    // handles adding a task to the database
-    const handleAddTask = async (title, desc) => {
-
-      const newTask = {
-        taskId: currentTasks.length === 1 ? 0 : currentTasks.length + 1 ,
-        title: title,
-        description: desc,
-        date: getDateInYMD_Format(selectedYear, selectedMonth, selectedDate),
-        formattedDate: getDateInDMY_Format(selectedYear, selectedMonth, selectedDate),
-        completed: false,
-        projectId: null
-      }
-
-      await addTask(newTask)
-      setCurrentTasks(...currentTasks, newTask)
-      loadData()
-
+  // Effect to reset to current date if viewing current month
+  useEffect(() => {
+    if (selectedMonthIndex === currentMonthIndex && selectedYear === currentYear) {
+      setSelectedDayOfMonth(currentDayOfMonth)
+    } else {
+      setSelectedDayOfMonth(null)
     }
+  }, [selectedMonthIndex])
 
-    // deleteTask function 
-    const handleDeleteTask = async (id) => {
-
-      await deleteTask(id)
-
-      setCurrentTasks(
-        currentTasks.filter(task => id !== task.taskId)
-      )
-
+  // Effect to load tasks when date changes
+  useEffect(() => {
+    if (selectedDayOfMonth) {
+      const formattedDate = getDateInDMY_Format(selectedYear, selectedMonthIndex, selectedDayOfMonth);
+      loadTasksForSelectedDate(formattedDate);
     }
+  }, [selectedDayOfMonth, selectedMonthIndex, selectedYear, currentTasks]);
 
-    // update task function
-    const handleUpdateTask = async (id, title, description, date, formattedDate, completed, projectId) => {
-
-      const updatedTask = {
-        taskId: id,
-        title: title,
-        description: description,
-        date: date,
-        formattedDate: formattedDate,
-        completed: completed,
-        projectId: projectId
-      }
-
-      await updateTask(id, updatedTask)
-
-      setCurrentTasks(prev => prev.map(prev => prev.taskId === updateTask.taskId ? updateTask : prev))
-
-      loadData()
-
-    }
-
-    // changes the days to the current month
-    useEffect(() => {
-      setDaysInMonth(getDaysInMonth(selectedYear, selectedMonth))
-      setSelectedDayIndex(getCurrentDayInMonthIndex(selectedYear, selectedMonth, selectedDate));
-      
-    }, [selectedDate, selectedMonth, selectedYear]);
-
-    // slides automatically to the selected calendarBtn
-    useEffect(() => {
-        // Scroll to current date when month changes or component mounts
-      if (scrollContainerRef.current && dateButtonRefs.current[selectedDate - 1]) {
-        const container = scrollContainerRef.current;
-        const button = dateButtonRefs.current[selectedDate - 1];
-      
-        // Calculate scroll position
-        const containerWidth = container.offsetWidth;
-        const buttonLeft = button.offsetLeft;
-        const buttonWidth = button.offsetWidth;
-      
-        // Scroll to center the button
-        container.scrollTo({
-          left: buttonLeft - (containerWidth / 2) + ((buttonWidth + 140) / 2),
-          behavior: 'smooth'
-        });
-      }
-      else {
-        const container = scrollContainerRef.current;
-        container.scrollTo({
-          left: 0,
-          behavior: 'smooth'
-        });
-      }
-    }, [selectedMonth, selectedDate]);
-
-    // checks if the date is from current month and year
-    useEffect(() => {
-      if (selectedMonth === month && selectedYear === year) {
-        setSelectedDate(today)
-      }
-      else {
-        setSelectedDate(null)
-      }
-    }, [selectedMonth])
-
-    // loads the current tasks related to the choosen date
-    useEffect(() => {
-      if (selectedDate) {
-        const formattedDate = getDateInDMY_Format(selectedYear, selectedMonth, selectedDate);
-        handleTasksDateChange(formattedDate);
-      }
-    }, [selectedDate, selectedMonth, selectedYear, currentTasks]);
-
-    // just loads new data to the array if anything happens
-    useEffect(() => {
-      loadData()
-    }, [])
-
+  // Effect to load initial data
+  useEffect(() => {
+    loadData()
+  }, [])
 
   return (
-    <div
-      className='flex flex-col bg-Pr min-h-[80vh] h-fit w-full text-CText duration-200 relative font-poppins'
-    >
-      
-      {/* greeting */}
-      <p
-        className={`text-lg font-semibold opacity-0 duration-200 ${loading && "opacity-100"} p-7`}
-      >
+    <div className='flex flex-col bg-Pr min-h-[80vh] h-fit w-full text-CText duration-200 relative font-poppins'>
+      {/* Greeting section */}
+      <p className={`text-lg font-semibold opacity-0 duration-200 ${loading && "opacity-100"} p-7`}>
         Hello Naeem
       </p>
 
-
-      <div
-        className='bg-BG p-7 rounded-tr-[2.5rem] flex flex-col gap-8 w-full min-h-[80vh] h-full pb-28'
-      >
-        
-        {/* states the current month and year and change month buttons */}
-        <div
-          className='flex flex-row items-center justify-between w-full'
-        >
-          <p
-            className='font-semibold text-lg'
-          >
-            {months[selectedMonth].fullName} {selectedYear}
+      <div className='bg-BG p-7 rounded-tr-[2.5rem] flex flex-col gap-8 w-full min-h-[80vh] h-full pb-28'>
+        {/* Month/Year display and navigation controls */}
+        <div className='flex flex-row items-center justify-between w-full'>
+          <p className='font-semibold text-lg'>
+            {monthNames[selectedMonthIndex].fullName} {selectedYear}
           </p>
-          <div
-            className='flex flex-row items-center gap-3'
-          >
+          <div className='flex flex-row items-center gap-3'>
             <button
-              onClick={() => handleMonthChange(2)}
+              onClick={() => handleMonthNavigation('previous')}
               className='p-1 active:bg-Pr duration-500 rounded-full'
             >
-              <svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
-                fill="currentColor" viewBox="0 0 24 24" >
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M14.29 6.29 8.59 12l5.7 5.71 1.42-1.42-4.3-4.29 4.3-4.29z"></path>
               </svg>
             </button>
             <button
-              onClick={() => handleMonthChange(1)}
+              onClick={() => handleMonthNavigation('next')}
               className='p-1 active:bg-Pr duration-500 rounded-full'
             >
-              <svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
-                fill="currentColor" viewBox="0 0 24 24" >
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                 <path d="m9.71 17.71 5.7-5.71-5.7-5.71-1.42 1.42 4.3 4.29-4.3 4.29z"></path>
               </svg>
             </button>
           </div>
         </div>
         
-        {/* calendar buttons */}
-        <div
-          ref={scrollContainerRef}
-          className='flex-row flex gap-3 overflow-x-scroll no-scrollbar'
-        >
-          {
-            Array.from({ length: daysInMonth }, (_, index) => {
-              
-              const date = new Date(selectedYear, selectedMonth, index + 1);
-              const dayNameIndex = date.getDay(); // 0 (Sun) to 6 (Sat)
+        {/* Calendar date selection buttons */}
+        <div ref={calendarScrollContainerRef} className='flex-row flex gap-3 overflow-x-scroll no-scrollbar'>
+          {Array.from({ length: daysInSelectedMonth }, (_, index) => {
+            const dayNumber = index + 1;
+            const date = new Date(selectedYear, selectedMonthIndex, dayNumber);
+            const dayOfWeekIndex = date.getDay(); // 0 (Sun) to 6 (Sat)
 
-              return (
-                <CalendarBtn
-                  key={index + 1}
-                  ref={(el) => (dateButtonRefs.current[index] = el)}  
-                  day={days[dayNameIndex].abrName}
-                  selectedDate={selectedDate}
-                  num={index + 1}
-                  handleCalendarBtnChange={() => handleCalendarBtnChange(index + 1)}
-
-                />
-              )
-            })}
+            return (
+              <CalendarBtn
+                key={dayNumber}
+                ref={(el) => (dateButtonRefs.current[index] = el)}  
+                day={dayNames[dayOfWeekIndex].abrName}
+                selectedDate={selectedDayOfMonth}
+                dateNumber={dayNumber}
+                handleDateSelection={() => handleDateSelection(dayNumber)}
+              />
+            )
+          })}
         </div>
 
-        <div
-          className='flex flex-col w-full h-fit gap-2'
-        >
-
-          {/* selected date and add new task btn */}
-          <div
-            className='flex flex-row justify-between pr-2'
-          >
-
-            <div
-              className='flex flex-col'
-            >
-              <span
-                className='text-xs font-medium text-DText'
-              >
-                {months[selectedMonth].abrName} {selectedDate} {selectedYear}
+        {/* Task section for selected date */}
+        <div className='flex flex-col w-full h-fit gap-2'>
+          {/* Selected date display and add task button */}
+          <div className='flex flex-row justify-between pr-2'>
+            <div className='flex flex-col'>
+              <span className='text-xs font-medium text-DText'>
+                {monthNames[selectedMonthIndex].abrName} {selectedDayOfMonth} {selectedYear}
               </span>
-              <p
-                className='font-medium'
-              >
-                {selectedDate === today && selectedMonth === month && selectedYear === year 
+              <p className='font-medium'>
+                {selectedDayOfMonth === currentDayOfMonth && 
+                 selectedMonthIndex === currentMonthIndex && 
+                 selectedYear === currentYear 
                   ? "Today"
-                  : days[selectedDayIndex].fullName
+                  : dayNames[selectedDayIndex].fullName
                 }
               </p>
             </div>
-            <button
-              onClick={() => setIsNewTaskActive(true)}
-            >
-              <svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
-                fill="currentColor" viewBox="0 0 24 24" >
+            <button onClick={() => setIsNewTaskFormActive(true)}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M3 13h8v8h2v-8h8v-2h-8V3h-2v8H3z"></path>
               </svg>
             </button>
-
           </div>
+          
           <span className='w-full bg-separator h-[0.75px]'></span>
 
-          {/* current tasks */}
-          <div
-            className='flex flex-col gap-3 w-full h-full pt-3'
-          >
-
-            {loadedTasks.length > 0 
-              ? loadedTasks.map((task, index) => (
-                  <div
-                    key={index + 1}
-                    className='flex flex-row items-start justify-start gap-2'
-                  >
-                    <span
-                      className='p-1 rounded-full border border-Pr min-w-6 text-[0.6rem] h-fit flex items-center bg-BGS font-medium justify-center mt-2'
-                    >
+          {/* Task list for selected date */}
+          <div className='flex flex-col gap-3 w-full h-full pt-3'>
+            {tasksForSelectedDate.length > 0 
+              ? tasksForSelectedDate.map((task, index) => (
+                  <div key={task.taskId} className='flex flex-row items-start justify-start gap-2'>
+                    <span className='p-1 rounded-full border border-Pr min-w-6 text-[0.6rem] h-fit flex items-center bg-BGS font-medium justify-center mt-2'>
                       {index + 1}
                     </span>
-                      <TaskCard
-                        id={task.taskId}
-                        title={task.title}
-                        description={task.description}
-                        date={task.date}
-                        formattedDate={task.formattedDate}
-                        completed={task.completed}
-                        projectId={task.projectId}
-                        projectName={task.projectName}
-                        updateFunction={handleUpdateTask}
-                        deleteFunction={() => handleDeleteTask(task.taskId)}
-                      /> 
+                    <TaskCard
+                      id={task.taskId}
+                      title={task.title}
+                      description={task.description}
+                      date={task.date}
+                      formattedDate={task.formattedDate}
+                      completed={task.completed}
+                      projectId={task.projectId}
+                      updateFunction={handleTaskUpdate}
+                      deleteFunction={() => handleTaskDeletion(task.taskId)}
+                    /> 
                   </div> 
                 ))
-              : <div
-                  className={`w-full h-full ${isNewTaskActive && "hidden"}`}
-                >
-                  <p
-                    className='font-medium text-CText/70 text-sm '
-                  >
+              : <div className={`w-full h-full ${isNewTaskFormActive && "hidden"}`}>
+                  <p className='font-medium text-CText/70 text-sm'>
                     No Tasks due for today
                   </p>
                 </div>
-              
             }
 
-            {/* <div
-              className='flex flex-row items-start justify-start gap-2'
-            >
-              <span
-                className='p-1 rounded-full border border-Pr min-w-6 text-[0.6rem] h-fit flex items-center bg-BGS font-medium justify-center mt-2'
-              >
-                2
-              </span>
-              <NewTaskCard/>
-            </div> */}
-
-            <div
-              className={`flex flex-row items-start justify-start gap-2 ${isNewTaskActive ? "flex" : "hidden"}`}
-            >
-              <span
-                className='p-1 rounded-full border border-Pr min-w-6 text-[0.6rem] h-fit flex items-center bg-BGS font-medium justify-center mt-2'
-              >
-                {loadedTasks.length + 1}
+            {/* New task form (conditionally rendered) */}
+            <div className={`flex flex-row items-start justify-start gap-2 ${isNewTaskFormActive ? "flex" : "hidden"}`}>
+              <span className='p-1 rounded-full border border-Pr min-w-6 text-[0.6rem] h-fit flex items-center bg-BGS font-medium justify-center mt-2'>
+                {tasksForSelectedDate.length + 1}
               </span>
               <NewCalendarTaskCard
-                setIsNewTaskActive={setIsNewTaskActive}
-                handleAddTask={handleAddTask}
+                setIsNewTaskFormActive={setIsNewTaskFormActive}
+                handleAddTask={handleTaskCreation}
               />
             </div>
-
           </div>
-
         </div>
-
       </div>
-
     </div>
   )
 }
