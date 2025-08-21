@@ -4,7 +4,7 @@ import NewTaskCard from '../components/Project/NewTaskCard'
 import ProjectTaskCard from '../components/Project/ProjectTaskCard'
 import { useEffect, useState} from 'react'
 
-const Project = ({loading, currentTasks, currentProjects}) => {
+const Project = ({loading, currentTasks, currentProjects, loadData}) => {
 
   // navigation
   const navigate = useNavigate()
@@ -21,9 +21,6 @@ const Project = ({loading, currentTasks, currentProjects}) => {
   // project details
   const [projectTitle, setProjectTitle] = useState("")
   const [projectDueDate, setProjectDueDate] = useState("")
-
-  // date 
-  const date = 1
   
   // tasks list
   const [tasks, setTasks] = useState([])
@@ -32,7 +29,10 @@ const Project = ({loading, currentTasks, currentProjects}) => {
   const handleAddingTasks = (title, desc, date) => {
 
     const newTask = {
-      taskId: currentTasks.length === 1 ? 0 : currentTasks.length + 1,
+      taskId: currentTasks.length > 0 && tasks.length < 0
+              ? 
+              
+              
       title: title, 
       description: desc,
       date: date,
@@ -102,6 +102,10 @@ const Project = ({loading, currentTasks, currentProjects}) => {
 
   }
 
+  useEffect(() => {
+    loadData()
+    console.log(tasks)
+  }, [tasks])
 
   return (
     <div
@@ -250,7 +254,7 @@ const Project = ({loading, currentTasks, currentProjects}) => {
             >
               {
                 tasks.length > 0
-                  ? tasks.map((task) => (
+                  ? tasks.map((task, index) => (
                       <div
                         key={task.taskId}
                         className='flex flex-row items-start justify-start gap-2'
@@ -258,7 +262,7 @@ const Project = ({loading, currentTasks, currentProjects}) => {
                         <span
                           className='p-1 rounded-full border border-Pr min-w-6 text-[0.6rem] h-fit flex items-center bg-BGS font-medium justify-center mt-2'
                         >
-                          {tasks.length}
+                          {index + 1}
                         </span>
                         <ProjectTaskCard
                           id={task.taskId}
@@ -266,6 +270,8 @@ const Project = ({loading, currentTasks, currentProjects}) => {
                           description={task.description}
                           date={task.date}
                           handleEditingTasks={handleEditingTasks}
+                          minDate={new Date().toISOString().split('T')[0]}
+                          maxDate={projectDueDate}
                         />
                       </div>
                     ))

@@ -43,8 +43,13 @@ const NewTaskCard = ({setIsNewTaskActive, handleAddingTasks, minDate, maxDate}) 
 
     useEffect(() => {
         if (maxDate !== currentProjectDate) {
-            setDate("")
             setIsError(true)
+            setDate("")
+            setCurrentProjectDate(maxDate)
+            console.log("this ran", date)
+        }
+        else {
+            setIsError(false)
         }
     }, [maxDate])
 
@@ -65,6 +70,7 @@ const NewTaskCard = ({setIsNewTaskActive, handleAddingTasks, minDate, maxDate}) 
                 onChange={(e) => handleTitleChange(e)}
                 value={title}
                 type="text" 
+                onClick={() => setIsError(false)}
                 placeholder='Task title...'
                 className='w-full outline-none text-sm font-medium placeholder:text-DText'
             />
@@ -72,6 +78,7 @@ const NewTaskCard = ({setIsNewTaskActive, handleAddingTasks, minDate, maxDate}) 
                 onChange={(e) => setDesc(e.target.value)}
                 value={desc}
                 type="text"
+                onClick={() => setIsError(false)}
                 placeholder='Task description...'
                 className='w-56 h-full min-h-16 resize-none no-scrollbar outline-none text-xs font-medium placeholder:text-DText text-CText/70'
                 maxLength={130}
@@ -89,6 +96,7 @@ const NewTaskCard = ({setIsNewTaskActive, handleAddingTasks, minDate, maxDate}) 
                     value={date}
                     min={minDate}
                     max={maxDate}
+                    onClick={() => setIsError(false)}
                     onChange={(e) => setDate(e.target.value)}
                     className='w-fit text-xs font-medium text-DText outline-none'
                 />

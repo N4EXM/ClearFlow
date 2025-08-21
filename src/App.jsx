@@ -79,6 +79,7 @@ function App() {
                   currentProjects={currentProjects}
                   currentTasks={currentTasks}
                   loading={loading}
+                  loadData={loadData}
                 />
               : <LoadingPage/>
             }
