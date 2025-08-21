@@ -22,17 +22,15 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
   const [projectTitle, setProjectTitle] = useState("")
   const [projectDueDate, setProjectDueDate] = useState("")
   
-  // tasks list
+  // tasks details
   const [tasks, setTasks] = useState([])
+  const [taskLength, setTaskLength] = useState(currentTasks.length)
 
   // function to add tasks
   const handleAddingTasks = (title, desc, date) => {
 
     const newTask = {
-      taskId: currentTasks.length > 0 && tasks.length < 0
-              ? 
-              
-              
+      taskId: taskLength + 1,
       title: title, 
       description: desc,
       date: date,
@@ -41,6 +39,7 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
       projectId: currentProjects.length === 1 ? 0 : currentProjects.length + 1,
       projectName: null
     }
+    setTaskLength(taskLength + 1)
     setTasks([...tasks, newTask])
     setIsNewTaskActive(false)
   }
@@ -97,6 +96,7 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
     }
     if (projectNameError === false && projectDueDateError === false) {
       setTaskListError(false)
+      loadData()
       setIsNewTaskActive(true)
     }
 
@@ -105,6 +105,7 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
   useEffect(() => {
     loadData()
     console.log(tasks)
+    console.log(taskLength)
   }, [tasks])
 
   return (
