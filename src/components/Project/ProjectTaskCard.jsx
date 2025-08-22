@@ -34,7 +34,7 @@ const ProjectTaskCard = ({id, title, description, date, handleEditingTasks, minD
             setIsError(true)
             setNewDate("")
             setCurrentProjectDate(maxDate)
-            console.log("this ran", newDate)
+            console.log("this ran", date)
         }
         else {
             setIsError(false)

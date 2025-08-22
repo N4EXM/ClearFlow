@@ -16,7 +16,9 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
   // errors
   const [projectNameError, setProjectNameError] = useState(false)
   const [projectDueDateError, setProjectDueDateError] = useState(false)
-  const [taskListError, setTaskListError] = useState(false) 
+  const [taskListError, setTaskListError] = useState(false)
+  const [noErrors, setNoErrors] = useState(false) 
+  const [dateErrors, setDateErrors] = useState("")
 
   // project details
   const [projectTitle, setProjectTitle] = useState("")
@@ -69,6 +71,12 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
 
   }
 
+  const checkTaskDate = () => {
+
+    
+
+  }
+
   // finishes the project creation
   const handleCreatingProject = () => {
 
@@ -84,6 +92,8 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
     if (projectNameError === false && projectDueDateError === false && tasks.length > 0) {
       console.log(true)
     }
+
+
   }
 
   const handleNewTaskToggle = () => {
@@ -101,12 +111,31 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
     }
 
   }
+  
+  // checks if all the dates are valid
+  function isDateInRange(task, startDate, endDate) {
+    
+    // Convert all dates to Date objects for comparison
+    const taskDate = new Date(task.date);
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+  
+    // Check if task date is between start and end dates (inclusive)
+    return taskDate >= start && taskDate <= end;
+  
+  }
 
   useEffect(() => {
     loadData()
     console.log(tasks)
     console.log(taskLength)
   }, [tasks])
+
+  useEffect(() => {
+    if (tasks.length > 0) {
+      console.log("comparing dates: ", isDateInRange(tasks[0], new Date().toISOString().split('T')[0], projectDueDate))
+    }
+  }, [projectDueDate, tasks])
 
   return (
     <div
@@ -270,6 +299,7 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
                           title={task.title}
                           description={task.description}
                           date={task.date}
+                          checkTaskDate={checkTaskDate}
                           handleEditingTasks={handleEditingTasks}
                           minDate={new Date().toISOString().split('T')[0]}
                           maxDate={projectDueDate}
@@ -305,6 +335,7 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
                 <NewTaskCard
                   setIsNewTaskActive={setIsNewTaskActive}
                   handleAddingTasks={handleAddingTasks}
+                  checkTaskDate={checkTaskDate}
                   minDate={new Date().toISOString().split('T')[0]}
                   maxDate={projectDueDate}
                 />
@@ -320,7 +351,7 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
           >
             <button
               onClick={() => handleNewTaskToggle()}
-              className='bg-Pr rounded-full p-2.5'
+              className={`bg-Pr rounded-full p-2.5 ${projectTitle !== "" && projectDueDate !== "" ? "block" : "hidden"}`}
             >    
               <svg  xmlns="http://www.w3.org/2000/svg" width="28" height="28"  
                 fill="currentColor" viewBox="0 0 24 24" >
@@ -329,7 +360,7 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
             </button>
             <button
               onClick={() => handleCreatingProject()}
-              className='bg-Pr rounded-full p-2.5'
+              className={`bg-Pr rounded-full p-2.5  ${projectTitle !== "" && projectDueDate !== "" && tasks.length > 0 && !dateErrors ? "block" : "hidden"}`}
             >    
               <svg  xmlns="http://www.w3.org/2000/svg" width="28" height="28"  
                 fill="currentColor" viewBox="0 0 24 24" >
@@ -345,3 +376,4 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
 }
 
 export default Project
+
