@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
 
-const ProjectTaskCard = ({id, title, description, date, handleEditingTasks, minDate, maxDate, checkTaskDate, handleDeletingTask}) => {
+const ProjectTaskCard = ({id, title, description, date, handleEditingTasks, minDate, maxDate, handleDeletingTask}) => {
 
     // task details
     const [newTitle, setNewTitle] = useState(title)
     const [newDescription, setNewDescription] = useState(description)
     const [newDate, setNewDate] = useState(date)
-    const [currentProjectDate, setCurrentProjectDate] = useState(maxDate || "")
+    const [currentProjectDate, setCurrentProjectDate] = useState(date)
   
     // toggles   
     const [isEdit, setIsEdit] = useState(false) // true: edit mode false: stops edit mode
@@ -28,23 +28,27 @@ const ProjectTaskCard = ({id, title, description, date, handleEditingTasks, minD
         }
         
     }
-  
-    useEffect(() => {
-        const validDate = checkTaskDate(minDate, newDate, currentProjectDate)
 
-        if (validDate) {
-            return true
+    useEffect(() => {
+
+        const due = new Date(newDate)
+        const projectDate = new Date(maxDate)
+
+        console.log("due:", due)
+        console.log("project date: ", projectDate)
+
+        if (due > projectDate) {
+            setIsError(true)
         }
         else {
-            setIsError(true)
-            setNewDate("")
+            setIsError(false)
         }
 
     }, [maxDate])
 
     return (
         <div
-            className='w-full min-h-32 h-full bg-BGS rounded-md px-4 py-4 pt-3 flex flex-col justify-between'
+            className='w-full min-h-36 h-full bg-BGS rounded-md px-4 py-4 pt-3 flex flex-col justify-between'
         >
             <div
                 className='w-fit h-full flex flex-col gap-1 relative'

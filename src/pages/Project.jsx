@@ -75,27 +75,21 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
 
   }
 
-  const checkTaskDate = (todayDate, dueDate, currentProjectDate) => {
+  const checkTaskDates = () => {
+    const projectDate = new Date(projectDueDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset time for accurate comparison
 
-    const date = new Date(dueDate)
-    const projectDate = new Date(currentProjectDate)
+    // Check if ANY task has an invalid date
+    const hasInvalidDate = tasks.some(task => {
+      const taskDate = new Date(task.date);
+      taskDate.setHours(0, 0, 0, 0); // Reset time
+    
+      return taskDate > projectDate || taskDate < today;
+    });
 
-    console.log(todayDate)
-    console.log(dueDate)
-    console.log(currentProjectDate)
-
-    if (date > projectDate || date < todayDate) {
-      setDateErrors(true)
-      console.log("date true")
-      return true
-    } 
-    else {
-      setDateErrors(false)
-      console.log("date false")
-      return false
-    }
-
-  }
+    setDateErrors(hasInvalidDate);
+  };
 
   // finishes the project creation
   const handleCreatingProject = () => {
@@ -132,6 +126,10 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
 
   }
   
+  useEffect(() => {
+    console.log(tasks)
+    checkTaskDates()
+  }, [projectDueDate, tasks])
 
   return (
     <div
@@ -295,7 +293,6 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
                           title={task.title}
                           description={task.description}
                           date={task.date}
-                          checkTaskDate={checkTaskDate}
                           handleDeletingTask={handleDeletingTask}
                           handleEditingTasks={handleEditingTasks}
                           minDate={new Date().toISOString().split('T')[0]}
@@ -332,7 +329,6 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
                 <NewTaskCard
                   setIsNewTaskActive={setIsNewTaskActive}
                   handleAddingTasks={handleAddingTasks}
-                  checkTaskDate={checkTaskDate}
                   minDate={new Date().toISOString().split('T')[0]}
                   maxDate={projectDueDate}
                 />
