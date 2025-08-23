@@ -46,6 +46,10 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
     setIsNewTaskActive(false)
   }
 
+  const handleDeletingTask = (id) => {
+    setTasks(tasks.filter(task => id !== task.taskId))
+  }
+
   // used for setting the formatted date
   const handleFormatDate = (date) => {
     const [year, month, day] = date.split("-");
@@ -53,7 +57,7 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
   }
 
   // handles changing details of the tasks
-  const handleEditingTasks = (id, title, desc, date, projectId,) => {
+  const handleEditingTasks = (id, title, desc, date, projectId) => {
 
     const editedTask = {
       taskId: id,
@@ -71,9 +75,25 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
 
   }
 
-  const checkTaskDate = () => {
+  const checkTaskDate = (todayDate, dueDate, currentProjectDate) => {
 
-    
+    const date = new Date(dueDate)
+    const projectDate = new Date(currentProjectDate)
+
+    console.log(todayDate)
+    console.log(dueDate)
+    console.log(currentProjectDate)
+
+    if (date > projectDate || date < todayDate) {
+      setDateErrors(true)
+      console.log("date true")
+      return true
+    } 
+    else {
+      setDateErrors(false)
+      console.log("date false")
+      return false
+    }
 
   }
 
@@ -112,30 +132,6 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
 
   }
   
-  // checks if all the dates are valid
-  function isDateInRange(task, startDate, endDate) {
-    
-    // Convert all dates to Date objects for comparison
-    const taskDate = new Date(task.date);
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-  
-    // Check if task date is between start and end dates (inclusive)
-    return taskDate >= start && taskDate <= end;
-  
-  }
-
-  useEffect(() => {
-    loadData()
-    console.log(tasks)
-    console.log(taskLength)
-  }, [tasks])
-
-  useEffect(() => {
-    if (tasks.length > 0) {
-      console.log("comparing dates: ", isDateInRange(tasks[0], new Date().toISOString().split('T')[0], projectDueDate))
-    }
-  }, [projectDueDate, tasks])
 
   return (
     <div
@@ -300,6 +296,7 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
                           description={task.description}
                           date={task.date}
                           checkTaskDate={checkTaskDate}
+                          handleDeletingTask={handleDeletingTask}
                           handleEditingTasks={handleEditingTasks}
                           minDate={new Date().toISOString().split('T')[0]}
                           maxDate={projectDueDate}

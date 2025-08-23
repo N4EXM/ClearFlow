@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-const ProjectTaskCard = ({id, title, description, date, handleEditingTasks, minDate, maxDate}) => {
+const ProjectTaskCard = ({id, title, description, date, handleEditingTasks, minDate, maxDate, checkTaskDate, handleDeletingTask}) => {
 
     // task details
     const [newTitle, setNewTitle] = useState(title)
@@ -30,15 +30,16 @@ const ProjectTaskCard = ({id, title, description, date, handleEditingTasks, minD
     }
   
     useEffect(() => {
-        if (maxDate !== currentProjectDate) {
-            setIsError(true)
-            setNewDate("")
-            setCurrentProjectDate(maxDate)
-            console.log("this ran", date)
+        const validDate = checkTaskDate(minDate, newDate, currentProjectDate)
+
+        if (validDate) {
+            return true
         }
         else {
-            setIsError(false)
+            setIsError(true)
+            setNewDate("")
         }
+
     }, [maxDate])
 
     return (
@@ -118,7 +119,7 @@ const ProjectTaskCard = ({id, title, description, date, handleEditingTasks, minD
                                     className='w-full flex justify-end items-end gap-1'
                                 >
                                     <button
-                                        onClick={() => {}}
+                                        onClick={() => handleDeletingTask(id)}
                                         className='p-2 rounded-sm bg-rose-500'
                                     >
                                         {/* trash */}
