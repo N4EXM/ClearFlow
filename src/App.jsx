@@ -47,9 +47,9 @@ function App() {
   }
 
 
-  // useEffect(() => {
-  //   console.log("tasks: ", currentTasks)
-  // }, [currentProjects, currentTasks])
+  useEffect(() => {
+    console.log("tasks: ", currentTasks)
+  }, [currentProjects, currentTasks])
 
 
   return (

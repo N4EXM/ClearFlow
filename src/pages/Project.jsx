@@ -2,7 +2,8 @@ import React, { useRef } from 'react'
 import { data, useNavigate } from 'react-router-dom'
 import NewTaskCard from '../components/Project/NewTaskCard'
 import ProjectTaskCard from '../components/Project/ProjectTaskCard'
-import { useEffect, useState} from 'react'
+import { useEffect, useState } from 'react'
+import { addMultipleTasks, addProject } from '../database/tasksOperations'
 
 const Project = ({loading, currentTasks, currentProjects, loadData}) => {
 
@@ -92,7 +93,7 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
   };
 
   // finishes the project creation
-  const handleCreatingProject = () => {
+  const handleCreatingProject = async () => {
 
     if (projectTitle.length === 0 ) {
       setProjectNameError(true)
@@ -104,7 +105,27 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
       setTaskListError(true)
     }
     if (projectNameError === false && projectDueDateError === false && tasks.length > 0) {
-      console.log(true)
+
+      try {
+
+        // const newTasks = ()
+
+        const newProject = {
+          projectId: currentProjects.length === 1 ? 0 : currentProjects.length + 1,
+          projectTitle: projectTitle,
+          projectDueDate: projectDueDate,
+        }
+
+        await addMultipleTasks(tasks)
+        await addProject(newProject)
+
+        loadData()
+
+      }
+      catch (error) {
+        console.log(error)
+      }
+
     }
 
 
@@ -128,6 +149,7 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
   
   useEffect(() => {
     console.log(tasks)
+    console.log("tasks length:", taskLength)
     checkTaskDates()
   }, [projectDueDate, tasks])
 
