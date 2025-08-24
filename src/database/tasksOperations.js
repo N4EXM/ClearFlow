@@ -45,11 +45,19 @@ export async function deleteTask(taskId) {
 
 }
 
+// tasksOperations.js - UPDATED
 export async function addProject(project) {
-    
-    const db = await getDB()
-    return db.add("projects", project)
-
+  try {
+    console.log('Adding project:', JSON.stringify(project, null, 2));
+    const db = await getDB();
+    const result = await db.add("projects", project);
+    console.log('Project added successfully:', result);
+    return result;
+  } catch (error) {
+    console.error('Error adding project:', error);
+    console.error('Project data that failed:', project);
+    throw error; // Re-throw to handle in calling function
+  }
 }
 
 export async function getAllProjects() {

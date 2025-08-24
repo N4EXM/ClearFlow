@@ -196,6 +196,7 @@ const CalendarPage = ({ loading, currentProjects, currentTasks, setCurrentTasks,
   // Effect to load initial data
   useEffect(() => {
     loadData()
+    console.log(currentTasks)
   }, [])
 
   return (

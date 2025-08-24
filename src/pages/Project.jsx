@@ -54,7 +54,7 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
   // used for setting the formatted date
   const handleFormatDate = (date) => {
     const [year, month, day] = date.split("-");
-    return `${day}-${month}-${year}`
+    return `${day}/${month}/${year}`
   }
 
   // handles changing details of the tasks
@@ -92,44 +92,43 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
     setDateErrors(hasInvalidDate);
   };
 
-  // finishes the project creation
   const handleCreatingProject = async () => {
-
-    if (projectTitle.length === 0 ) {
-      setProjectNameError(true)
-    } 
-    if (projectDueDate === "") {
-      setProjectDueDateError(true)
-    }
-    if (tasks.length === 0) {
-      setTaskListError(true)
-    }
-    if (projectNameError === false && projectDueDateError === false && tasks.length > 0) {
-
-      try {
-
-        // const newTasks = ()
-
-        const newProject = {
-          projectId: currentProjects.length === 1 ? 0 : currentProjects.length + 1,
-          projectTitle: projectTitle,
-          projectDueDate: projectDueDate,
-        }
-
-        await addMultipleTasks(tasks)
-        await addProject(newProject)
-
-        loadData()
-
-      }
-      catch (error) {
-        console.log(error)
-      }
-
-    }
-
-
+  // Calculate validation errors based on current values
+  const hasNameError = projectTitle.length === 0;
+  const hasDateError = projectDueDate === "";
+  const hasTaskError = tasks.length === 0;
+  
+  // Set error states
+  setProjectNameError(hasNameError);
+  setProjectDueDateError(hasDateError);
+  setTaskListError(hasTaskError);
+  
+  // Check if any errors exist
+  if (hasNameError || hasDateError || hasTaskError) {
+    return; // Stop execution if any errors
   }
+
+  try {
+    // Your project creation logic here...
+    const newProject = {
+      projectId: currentProjects.length === 1 ? 0 : currentProjects.length + 1,
+      name: projectTitle,
+      date: projectDueDate,
+      percentage: 0
+    };
+    
+    await addProject(newProject);
+    await addMultipleTasks(tasks.map(task => ({
+      ...task,
+      projectId: newProject.projectId
+    })));
+    
+    loadData();
+    
+  } catch (error) {
+    console.error('Creation failed:', error);
+  }
+}; 
 
   const handleNewTaskToggle = () => {
 

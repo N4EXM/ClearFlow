@@ -48,7 +48,7 @@ const ProjectTaskCard = ({id, title, description, date, handleEditingTasks, minD
 
     return (
         <div
-            className='w-full min-h-36 h-full bg-BGS rounded-md px-4 py-4 pt-3 flex flex-col justify-between'
+            className='w-full min-h-40 h-full bg-BGS rounded-md px-4 py-4 pt-3 flex flex-col justify-between'
         >
             <div
                 className='w-fit h-full flex flex-col gap-1 relative'
