@@ -129,7 +129,7 @@ const CalendarPage = ({ loading, currentProjects, currentTasks, setCurrentTasks,
   }
 
   // Handler for updating a task
-  const handleTaskUpdate = async (taskId, title, description, date, formattedDate, completed, projectId) => {
+  const handleTaskUpdate = async (taskId, title, description, date, formattedDate, completed, projectId, projectName) => {
     const updatedTask = {
       taskId: taskId,
       title: title,
@@ -138,7 +138,7 @@ const CalendarPage = ({ loading, currentProjects, currentTasks, setCurrentTasks,
       formattedDate: formattedDate,
       completed: completed,
       projectId: projectId,
-      projectName: projectId === null ? "No project" : currentProjects[projectId].projectName
+      projectName: projectName
     }
 
     await updateTask(taskId, updatedTask)
@@ -294,6 +294,7 @@ const CalendarPage = ({ loading, currentProjects, currentTasks, setCurrentTasks,
                       formattedDate={task.formattedDate}
                       completed={task.completed}
                       projectId={task.projectId}
+                      projectName={task.projectName}
                       updateFunction={handleTaskUpdate}
                       deleteFunction={() => handleTaskDeletion(task.taskId)}
                     /> 

@@ -67,7 +67,8 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
       date: date,
       formattedDate: handleFormatDate(date),
       projectId: projectId,
-      completed: false
+      completed: false,
+      projectName: null
     }
 
     setTasks(tasks.map(task =>
@@ -120,6 +121,7 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
     await addProject(newProject);
     await addMultipleTasks(tasks.map(task => ({
       ...task,
+      projectName: projectTitle,
       projectId: newProject.projectId
     })));
     
