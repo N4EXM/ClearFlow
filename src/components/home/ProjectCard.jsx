@@ -2,7 +2,8 @@ import React from 'react'
 import CircularProgressBar from './CircularProgressBar'
 
 
-const ProjectCard = ({name, date, completionDetails, projects}) => {
+const ProjectCard = ({name, date, id, percentage, total, remaining}) => {
+
   return (
     <div
       className='bg-BG p-4 flex flex-row gap-3 rounded'
@@ -10,7 +11,7 @@ const ProjectCard = ({name, date, completionDetails, projects}) => {
         <CircularProgressBar
           size={70}
           strokeWidth={8.5}
-          progress={completionDetails.percentage}
+          progress={percentage}
         />
         
         <div
@@ -27,7 +28,7 @@ const ProjectCard = ({name, date, completionDetails, projects}) => {
             <p
               className='font-medium text-[0.65rem] text-DText'
             >
-              {completionDetails.remaining} more tasks to go
+              {remaining} more tasks to go
             </p>
           </div>
 

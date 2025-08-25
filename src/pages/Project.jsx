@@ -115,7 +115,9 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
       projectId: currentProjects.length === 1 ? 0 : currentProjects.length + 1,
       name: projectTitle,
       date: projectDueDate,
-      percentage: 0
+      percentage: 0,
+      total: tasks.length,
+      remaining: tasks.length
     };
     
     await addProject(newProject);

@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react'
 
 
-
 const TaskCard = ({id, title, description, date, formattedDate, completed, projectId, projectName, deleteFunction, updateFunction}) => {
 
     // toggles

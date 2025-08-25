@@ -5,54 +5,7 @@ import StatisticsCard from '../components/home/StatisticsCard'
 import { getTasksByProjectId } from '../database/tasksOperations'
 
 const Home = ({loading, projects, tasks}) => {
-
-  // Make the function async since it uses await
-  const getProjectCompletionDetails = async (id) => {
-
-    try {
-      // await the Promise to get the actual tasks array
-      const currentTasks = await getTasksByProjectId(id);
-      
-      console.log(currentTasks)
-
-      // Handle case where no tasks exist
-      if (!currentTasks || currentTasks.length === 0) {
-        console.log("no tasks?")
-        return {
-          completed: 0,
-          total: 0,
-          percentage: 0,
-          remaining: 0
-        };
-      }
-      
-      // Count completed tasks
-      const completedCount = currentTasks.filter(task => task.completed === true).length;
-      const totalTasks = currentTasks.length;
-      
-      const details = {
-        completed: completedCount,
-        total: totalTasks,
-        percentage: (completedCount / totalTasks) * 100, // Percentage as number 0-100
-        remaining: totalTasks -  completedCount
-      }
-
-      console.log(details)
-      return details
-      
-    } 
-    catch (error) {
-      console.error('Error getting completion details:', error);
-      return {
-        completed: 0,
-        total: 0,
-        percentage: 0,
-        remaining: 0,
-        error: error.message
-      };
-    }
-  };  
-
+  
   return (
     <div
       className='flex flex-col gap-5 bg-BG min-h-screen h-full w-full text-CText duration-200 p-7 relative font-poppins pb-32'
@@ -78,9 +31,12 @@ const Home = ({loading, projects, tasks}) => {
           ? projects.map((project, _) => (
               <ProjectCard
                 key={project.projectId}
+                id={project.projectId}
                 name={project.name}
                 date={project.date}
-                completionDetails={getProjectCompletionDetails(project.projectId)}
+                percentage={project.percentage}
+                total={project.total}
+                remaining={project.remaining}
               />              
             ))
           : <div

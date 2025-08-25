@@ -99,3 +99,10 @@ export async function deleteProject(id) {
     return db.delete("projects", id)
 
 }
+
+export async function completeTask(projectId, update) {
+  
+  const db = await getDB()
+  
+
+}
