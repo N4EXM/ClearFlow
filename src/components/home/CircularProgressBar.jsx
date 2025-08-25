@@ -44,7 +44,10 @@ const CircularProgressBar = ({ progress, size = 100, strokeWidth = 10 }) => {
         fontWeight: 'bold',
         color: '#ffffff'
       }}>
-        {progress}%
+        {progress
+          ? `${progress}%`
+          : "0%"
+        }
       </div>
     </div>
   );

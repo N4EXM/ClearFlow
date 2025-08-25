@@ -126,6 +126,8 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
     })));
     
     loadData();
+
+    navigate("/")
     
   } catch (error) {
     console.error('Creation failed:', error);

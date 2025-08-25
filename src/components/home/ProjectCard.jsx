@@ -2,7 +2,7 @@ import React from 'react'
 import CircularProgressBar from './CircularProgressBar'
 
 
-const ProjectCard = () => {
+const ProjectCard = ({name, date, completionDetails, projects}) => {
   return (
     <div
       className='bg-BG p-4 flex flex-row gap-3 rounded'
@@ -10,7 +10,7 @@ const ProjectCard = () => {
         <CircularProgressBar
           size={70}
           strokeWidth={8.5}
-          progress={75}
+          progress={completionDetails.percentage}
         />
         
         <div
@@ -22,12 +22,12 @@ const ProjectCard = () => {
             <h1
               className='font-bold text-sm'
             >
-              Todo App Project
+              {name}
             </h1>
             <p
               className='font-medium text-[0.65rem] text-DText'
             >
-              29 more tasks to go
+              {completionDetails.remaining} more tasks to go
             </p>
           </div>
 
@@ -41,7 +41,7 @@ const ProjectCard = () => {
               fill="currentColor" viewBox="0 0 24 24" >
               <path d="m19,4h-2v-2h-2v2h-6v-2h-2v2h-2c-1.1,0-2,.9-2,2v1h18v-1c0-1.1-.9-2-2-2Z"></path><path d="m3,20c0,1.1.9,2,2,2h14c1.1,0,2-.9,2-2v-12H3v12Zm12-8h2v2h-2v-2Zm0,4h2v2h-2v-2Zm-4-4h2v2h-2v-2Zm0,4h2v2h-2v-2Zm-4-4h2v2h-2v-2Zm0,4h2v2h-2v-2Z"></path>
               </svg>
-              22/07/25
+              {date}
             </p>
             <svg  xmlns="http://www.w3.org/2000/svg" width="20" height="20"  
               fill="currentColor" viewBox="0 0 24 24" >

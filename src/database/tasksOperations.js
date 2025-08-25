@@ -45,6 +45,25 @@ export async function deleteTask(taskId) {
 
 }
 
+// tasksOperations.js
+export async function getTasksByProjectId(projectId) {
+  try {
+    const db = await getDB();
+    const tx = db.transaction('tasks', 'readonly');
+    const store = tx.objectStore('tasks');
+    const index = store.index('projectId'); // Use the index we created
+    
+    // Get all tasks with matching projectId
+    const tasks = await index.getAll(projectId);
+    await tx.done;
+    
+    return tasks;
+  } catch (error) {
+    console.error('Error getting tasks by project:', error);
+    throw error;
+  }
+}
+
 // tasksOperations.js - UPDATED
 export async function addProject(project) {
   try {
