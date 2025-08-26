@@ -1,11 +1,21 @@
 import getDB from "./db";
 
 export async function addTask(task) {
-
-    console.log('Adding task:', JSON.stringify(task, null, 2)); // ← Add this
-    const db = await getDB()
-    return db.add("tasks", task)
-
+  try {
+    console.log('Adding task:', task);
+    const db = await getDB();
+    const result = await db.add('tasks', task);
+    
+    // Update project stats if this task belongs to a project
+    if (task.projectId) {
+      await updateProjectCompletion(task.projectId);
+    }
+    
+    return result;
+  } catch (error) {
+    console.error('Error adding task:', error);
+    throw error;
+  }
 }
 
 export async function getAllTasks() {
@@ -18,13 +28,28 @@ export async function getAllTasks() {
 // db.js
 export async function addMultipleTasks(tasksArray) {
   const results = [];
+  const projectsToUpdate = new Set();
   
   for (const task of tasksArray) {
     try {
-      const id = await addTask(task); // ← Now properly awaited
+      const id = await addTask(task);
       results.push({ success: true, id, task });
+      
+      // Track projects that need updating
+      if (task.projectId) {
+        projectsToUpdate.add(task.projectId);
+      }
     } catch (error) {
       results.push({ success: false, error: error.message, task });
+    }
+  }
+  
+  // Update all affected projects
+  for (const projectId of projectsToUpdate) {
+    try {
+      await updateProjectCompletion(projectId);
+    } catch (error) {
+      console.error(`Error updating project ${projectId}:`, error);
     }
   }
   
@@ -32,17 +57,55 @@ export async function addMultipleTasks(tasksArray) {
 }
 
 export async function updateTask(id, updates) {
+  try {
+    const db = await getDB();
     
-    const db = await getDB()
-    return db.put("tasks", {...updates, id})
+    // First get the current task to check if projectId changed
+    const currentTask = await db.get('tasks', id);
+    
+    // Update the task
+    const result = await db.put('tasks', { ...updates, id });
 
+    console.log(updates)
+    
+    // If completion status changed or project changed, update project stats
+    if (updates.completed !== undefined || updates.projectId !== undefined) {
+      // Update both old and new projects (if project changed)
+      if (currentTask && currentTask.projectId) {
+        await updateProjectCompletion(currentTask.projectId);
+      }
+      if (updates.projectId) {
+        await updateProjectCompletion(updates.projectId);
+      }
+    }
+    
+    return result;
+    
+  } catch (error) {
+    console.error('Error updating task:', error);
+    throw error;
+  }
 }
 
 export async function deleteTask(taskId) {
+  try {
+    const db = await getDB();
     
-    const db = await getDB()
-    return db.delete("tasks", taskId)
-
+    // First get the task to know which project to update
+    const task = await db.get('tasks', taskId);
+    
+    // Delete the task
+    await db.delete('tasks', taskId);
+    
+    // Update project stats if this task belonged to a project
+    if (task && task.projectId) {
+      await updateProjectCompletion(task.projectId);
+    }
+    
+  } catch (error) {
+    console.error('Error deleting task:', error);
+    throw error;
+  }
 }
 
 // tasksOperations.js
@@ -100,9 +163,38 @@ export async function deleteProject(id) {
 
 }
 
-export async function completeTask(projectId, update) {
-  
-  const db = await getDB()
-  
+// tasksOperations.js
+export async function updateProjectCompletion(projectId) {
+  try {
+    // Get all tasks for this project
+    const tasks = await getTasksByProjectId(projectId);
+    const projects = await getAllProjects()
 
+    const project = projects[projectId - 1]
+    
+    // Calculate completion stats
+    const totalTasks = tasks.length;
+    const completedTasks = tasks.filter(task => task.completed).length;
+    const remainingTasks = totalTasks - completedTasks;
+    const percentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+    
+    // Update the project
+    const db = await getDB();
+    await db.put('projects', {
+      projectId: projectId,
+      name: project.name,
+      date: project.date, 
+      percentage: percentage,
+      totalTasks: totalTasks,
+      remaining: remainingTasks
+    });
+    
+    console.log(`Project ${projectId} updated: ${percentage}% complete`);
+    
+    return { percentage, completedTasks, totalTasks, remainingTasks };
+    
+  } catch (error) {
+    console.error('Error updating project completion:', error);
+    throw error;
+  }
 }

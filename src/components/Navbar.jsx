@@ -25,17 +25,22 @@ const Navbar = ({loading}) => {
             }
         </Link>
         <div
-            className='w-fit h-fit flex pt-1'
+            className='w-fit px-5 p-3 gap-2 rounded-full bg-Pr/80 items-center justify-center h-fit flex  flex-row'
         >
             <Link
-                className='p-3 w-fit  h-fit bg-Pr rounded-full'
+                className='w-fit h-fit rounded-full'
                 to={'/newProject'}
             >
-                <svg  xmlns="http://www.w3.org/2000/svg" width="20" height="20"  
+                <svg className='' xmlns="http://www.w3.org/2000/svg" width="20" height="20"  
                     fill="currentColor" viewBox="0 0 24 24" >
                     <path d="M3 13h8v8h2v-8h8v-2h-8V3h-2v8H3z"></path>
                 </svg>
             </Link>
+            <p
+                className='text-sm font-semibold'
+            >
+                Project
+            </p>
         </div>  
         <Link
             to={"/CalendarPage"}
@@ -52,7 +57,6 @@ const Navbar = ({loading}) => {
                 </svg>
             }
         </Link>
-
     </div>
   )
 }

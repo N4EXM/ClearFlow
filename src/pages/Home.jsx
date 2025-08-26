@@ -63,8 +63,27 @@ const Home = ({loading, projects, tasks}) => {
           Current Tasks
         </p>
 
-        <UpcomingTask/>
-        <UpcomingTask/>
+        {
+          tasks.length > 0
+          ? tasks.map((task, _) => (
+              <UpcomingTask
+                key={task.taskId}
+                id={task.taskId}
+                title={task.title}
+                description={task.description}
+                date={task.date}
+              />              
+            ))
+          : <div
+              className='flex items-center justify-center w-full min-h-20'
+            >
+              <p
+                className='w-full h-full flex items-center justify-center text-sm font-medium text-DText'
+              >
+                No Tasks
+              </p>
+            </div>
+        }
         
 
       </div>

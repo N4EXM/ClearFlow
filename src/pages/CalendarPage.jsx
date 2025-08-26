@@ -126,6 +126,7 @@ const CalendarPage = ({ loading, currentProjects, currentTasks, setCurrentTasks,
   const handleTaskDeletion = async (taskId) => {
     await deleteTask(taskId)
     setCurrentTasks(currentTasks.filter(task => taskId !== task.taskId))
+    loadData()
   }
 
   // Handler for updating a task
