@@ -15,8 +15,9 @@ import Project from './pages/Project'
 import EditProject from './pages/EditProject'
 import CalendarPage from './pages/CalendarPage'
 import Navbar from './components/Navbar'
+import { useNavigate } from 'react-router-dom'
 import { BrowserRouter, Routes, Route, Navigate  } from 'react-router-dom'
-import { getAllTasks, getAllProjects } from './database/tasksOperations'
+import { getAllTasks, getAllProjects, getProjectById, getTasksByProjectId} from './database/tasksOperations'
 
 function App() {
 
@@ -43,6 +44,15 @@ function App() {
     setCurrentProjects(projects)
 
     return true
+
+  }
+
+  const handleLoadProjectEditPage = async (projectId) => {
+
+    const project = await getProjectById(projectId)
+    const tasks = await getTasksByProjectId(projectId)
+
+
 
   }
 

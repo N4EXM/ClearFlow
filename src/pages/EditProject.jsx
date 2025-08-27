@@ -112,21 +112,21 @@ const EditProject = ({currentProjects, loadData}) => {
 
   }
 
-  const checkTaskDates = () => {
-    const projectDate = new Date(projectDueDate);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Reset time for accurate comparison
+  // const checkTaskDates = () => {
+  //   const projectDate = new Date(projectDueDate);
+  //   const today = new Date();
+  //   today.setHours(0, 0, 0, 0); // Reset time for accurate comparison
 
-    // Check if ANY task has an invalid date
-    const hasInvalidDate = tasks.some(task => {
-      const taskDate = new Date(task.date);
-      taskDate.setHours(0, 0, 0, 0); // Reset time
+  //   // Check if ANY task has an invalid date
+  //   const hasInvalidDate = tasks.some(task => {
+  //     const taskDate = new Date(task.date);
+  //     taskDate.setHours(0, 0, 0, 0); // Reset time
     
-      return taskDate > projectDate || taskDate < today;
-    });
+  //     return taskDate > projectDate || taskDate < today;
+  //   });
 
-    setDateErrors(hasInvalidDate);
-  };
+  //   setDateErrors(hasInvalidDate);
+  // };
 
   const handleCreatingProject = async () => {
     // Calculate validation errors based on current values
