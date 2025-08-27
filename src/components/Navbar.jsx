@@ -7,7 +7,7 @@ const Navbar = ({loading}) => {
 
   return (
     <div
-        className={`duration-200 opacity-0 ${loading && "opacity-100"} pb-6 w-full bg-BGS p-4 px-10 ${location.pathname !== "/newProject" ? "flex" : "hidden"} flex-row items-center justify-between text-white fixed bottom-0 left-0 border-t-2 border-separator`}
+        className={`duration-200 opacity-0 ${loading && "opacity-100"} pb-6 w-full bg-BGS p-4 px-10 ${location.pathname !== "/newProject" ? "flex" : "hidden"} ${location.pathname !== "/EditProject" ? "flex" : "hidden"}  flex-row items-center justify-between text-white fixed bottom-0 left-0 border-t-2 border-separator`}
     >
         <Link
             to={"/"}
@@ -24,24 +24,24 @@ const Navbar = ({loading}) => {
                 </svg>
             }
         </Link>
-        <div
+        <Link
             className='w-fit px-5 p-3 gap-2 rounded-full bg-Pr/80 items-center justify-center h-fit flex  flex-row'
+            to={'/newProject'}
         >
-            <Link
+            <div
                 className='w-fit h-fit rounded-full'
-                to={'/newProject'}
             >
                 <svg className='' xmlns="http://www.w3.org/2000/svg" width="20" height="20"  
                     fill="currentColor" viewBox="0 0 24 24" >
                     <path d="M3 13h8v8h2v-8h8v-2h-8V3h-2v8H3z"></path>
                 </svg>
-            </Link>
+            </div>
             <p
                 className='text-sm font-semibold'
             >
                 Project
             </p>
-        </div>  
+        </Link>  
         <Link
             to={"/CalendarPage"}
             className={`${location.pathname === "/CalendarPage" && "text-Pr"} flex flex-col gap-1 items-center relative`}

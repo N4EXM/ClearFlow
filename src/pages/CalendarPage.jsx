@@ -107,7 +107,7 @@ const CalendarPage = ({ loading, currentProjects, currentTasks, setCurrentTasks,
   // Handler for adding a new task
   const handleTaskCreation = async (title, description) => {
     const newTask = {
-      taskId: currentTasks.length === 1 ? 0 : currentTasks.length + 1,
+      taskId: Date.now(),
       title: title,
       description: description,
       date: getDateInYMD_Format(selectedYear, selectedMonthIndex, selectedDayOfMonth),

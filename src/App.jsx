@@ -103,7 +103,11 @@ function App() {
             path={'/EditProject'}
             element={
               loading
-              ? <EditProject/>
+              ? <EditProject
+                  currentProjects={currentProjects}
+                  currentTasks={currentTasks}
+                  loadData={loadData}
+                />
               : <LoadingPage/>
             }  
           />

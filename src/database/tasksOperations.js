@@ -170,7 +170,11 @@ export async function updateProjectCompletion(projectId) {
     const tasks = await getTasksByProjectId(projectId);
     const projects = await getAllProjects()
 
-    const project = projects[projectId - 1]
+    const project = {}
+
+    for (let project of projects) {
+      
+    }
     
     // Calculate completion stats
     const totalTasks = tasks.length;
@@ -198,3 +202,27 @@ export async function updateProjectCompletion(projectId) {
     throw error;
   }
 }
+
+export async function updateProjectTasks(projectId, tasks) {
+
+  const currentTasks = await getTasksByProjectId(projectId)
+
+  try {
+
+    for (let task of currentTasks) {
+      await deleteTask(task.taskId)
+    }
+
+    let results = await addMultipleTasks(tasks)
+
+    return results
+
+
+  }
+  catch (error) {
+    console.log(error)
+  }
+
+  
+
+} 

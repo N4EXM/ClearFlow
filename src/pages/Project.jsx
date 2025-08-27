@@ -33,7 +33,7 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
   const handleAddingTasks = (title, desc, date) => {
 
     const newTask = {
-      taskId: taskLength + 1,
+      taskId: Date.now(),
       title: title, 
       description: desc,
       date: date,
@@ -49,6 +49,7 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
 
   const handleDeletingTask = (id) => {
     setTasks(tasks.filter(task => id !== task.taskId))
+    setTaskLength(taskLength - 1)
   }
 
   // used for setting the formatted date
@@ -112,7 +113,7 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
   try {
     // Your project creation logic here...
     const newProject = {
-      projectId: currentProjects.length === 1 ? 0 : currentProjects.length + 1,
+      projectId: Date.now(),
       name: projectTitle,
       date: projectDueDate,
       percentage: 0,
