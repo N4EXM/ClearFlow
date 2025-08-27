@@ -46,13 +46,6 @@ function App() {
 
   }
 
-
-  useEffect(() => {
-    console.log("tasks: ", currentTasks)
-    console.log("projects: ", currentProjects)
-  }, [currentProjects, currentTasks])
-
-
   return (
     <div
       className='relative '

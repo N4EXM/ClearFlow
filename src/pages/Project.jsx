@@ -152,12 +152,6 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
     }
 
   }
-  
-  useEffect(() => {
-    console.log(tasks)
-    console.log("tasks length:", taskLength)
-    checkTaskDates()
-  }, [projectDueDate, tasks])
 
   return (
     <div

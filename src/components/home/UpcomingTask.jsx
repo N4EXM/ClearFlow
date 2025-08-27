@@ -14,7 +14,7 @@ const UpcomingTask = ({id, title, description, date}) => {
                 {title}
             </h1>
             <p
-                className='text-xs text-CText/70 pr-4'
+                className='text-xs text-CText/70 pr-4 min-h-12'
             >
               {description}
             </p>

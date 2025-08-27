@@ -127,6 +127,45 @@ export async function getTasksByProjectId(projectId) {
   }
 }
 
+export async function deleteTasksByProjectId(projectId) {
+  try {
+    const db = await getDB();
+    const tx = db.transaction('tasks', 'readwrite');
+    const store = tx.objectStore('tasks');
+    
+    // If we have an index, use it for better performance
+    if (store.indexNames.contains('projectId')) {
+      const index = store.index('projectId');
+      
+      // Get all tasks for this project to return details
+      const tasks = await index.getAll(projectId);
+      const taskIds = tasks.map(task => task.taskId);
+      
+      // Delete all tasks
+      await Promise.all(taskIds.map(id => store.delete(id)));
+      await tx.done;
+      
+      console.log(`Deleted ${taskIds.length} tasks for project ${projectId}`);
+      return { count: taskIds.length, deletedTasks: tasks };
+    }
+    
+    // Fallback: manual filtering (slower but works without index)
+    const allTasks = await store.getAll();
+    const projectTasks = allTasks.filter(task => task.projectId === projectId);
+    const taskIds = projectTasks.map(task => task.taskId);
+    
+    await Promise.all(taskIds.map(id => store.delete(id)));
+    await tx.done;
+    
+    console.log(`Deleted ${taskIds.length} tasks for project ${projectId}`);
+    return { count: taskIds.length, deletedTasks: projectTasks };
+    
+  } catch (error) {
+    console.error('Error deleting tasks by project:', error);
+    throw error;
+  }
+}
+
 // tasksOperations.js - UPDATED
 export async function addProject(project) {
   try {
@@ -164,17 +203,30 @@ export async function deleteProject(id) {
 }
 
 // tasksOperations.js
+export async function getProjectById(projectId) {
+  try {
+    const db = await getDB();
+    const project = await db.get('projects', projectId);
+    
+    if (!project) {
+      throw new Error(`Project with ID ${projectId} not found`);
+    }
+    
+    return project;
+  } catch (error) {
+    console.error('Error getting project:', error);
+    throw error;
+  }
+}
+
+// tasksOperations.js
 export async function updateProjectCompletion(projectId) {
   try {
     // Get all tasks for this project
     const tasks = await getTasksByProjectId(projectId);
-    const projects = await getAllProjects()
+    const project = await getProjectById(projectId)
 
-    const project = {}
-
-    for (let project of projects) {
-      
-    }
+    console.log(project)
     
     // Calculate completion stats
     const totalTasks = tasks.length;
@@ -205,18 +257,13 @@ export async function updateProjectCompletion(projectId) {
 
 export async function updateProjectTasks(projectId, tasks) {
 
-  const currentTasks = await getTasksByProjectId(projectId)
-
   try {
 
-    for (let task of currentTasks) {
-      await deleteTask(task.taskId)
-    }
+    await deleteTasksByProjectId(projectId)
 
-    let results = await addMultipleTasks(tasks)
+    const results = await addMultipleTasks(tasks)
 
     return results
-
 
   }
   catch (error) {

@@ -4,11 +4,11 @@ import NewTaskCard from '../components/Project/NewTaskCard'
 import ExistingProjectTaskCard from '../components/Project/ExistingProjectTaskCard'
 import { updateProject, updateTask } from '../database/tasksOperations'
 
-const EditProject = ({currentProjects, currentTasks, loadData}) => {
+const EditProject = ({currentProjects, loadData}) => {
 
   // fake data
   const projectData = {
-    projectId: 1,
+    projectId: 162663626,
     name: "Note App",
     date: "2025-09-10",
     percentage: 25,
@@ -17,34 +17,31 @@ const EditProject = ({currentProjects, currentTasks, loadData}) => {
   }
   const taskData = [
     {
-      "taskId": 1,
-      "title": "Create the sidebar",
-      "description": "create a sidebar that is functional and shows current notes",
-      "date": "2025-08-27",
-      "formattedDate": "27/08/2025",
-      "completed": false,
-      "projectId": 1,
-      "projectName": "Note App"
+      taskId: 1384726272,
+      title: "Create the sidebar",
+      description: "create a sidebar that is functional and shows current notes",
+      date: "2025-08-27",
+      completed: false,
+      projectId: 1,
+      projectName: "Note App"
     },
     {
-      "taskId": 2,
-      "title": "Create the Task Card",
-      "description": "make a card that shows the title, description and date of the current note",
-      "date": "2025-08-30",
-      "formattedDate": "30/08/2025",
-      "completed": false,
-      "projectId": 1,
-      "projectName": "Note App"
+      taskId: 12383723224,
+      title: "Create the Task Card",
+      description: "make a card that shows the title, description and date of the current note",
+      date: "2025-08-30",
+      completed: false,
+      projectId: 1,
+      projectName: "Note App"
     },
     {
-      "taskId": 3,
-      "title": "Create a editor",
-      "description": "make an editor that allows the user creates a note, and edit a task",
-      "date": "2025-08-29",
-      "formattedDate": "29/08/2025",
-      "completed": false,
-      "projectId": 1,
-      "projectName": "Note App"
+      taskId: 45543224221,
+      title: "Create a editor",
+      description: "make an editor that allows the user creates a note, and edit a task",
+      date: "2025-08-29",
+      completed: false,
+      projectId: 1,
+      projectName: "Note App"
     }
   ]
 
@@ -68,7 +65,6 @@ const EditProject = ({currentProjects, currentTasks, loadData}) => {
   
   // tasks details
   const [tasks, setTasks] = useState(taskData)
-  const [taskLength, setTaskLength] = useState(tasks.length)
 
   // function to add tasks
   const handleAddingTasks = (title, desc, date) => {
@@ -78,7 +74,6 @@ const EditProject = ({currentProjects, currentTasks, loadData}) => {
       title: title, 
       description: desc,
       date: date,
-      formattedDate: handleFormatDate(date),
       completed: false,
       projectId: currentProjects.length === 1 ? 0 : currentProjects.length + 1,
       projectName: null
@@ -106,7 +101,6 @@ const EditProject = ({currentProjects, currentTasks, loadData}) => {
       title: title,
       description: desc,
       date: date,
-      formattedDate: handleFormatDate(date),
       projectId: projectId,
       completed: false,
       projectName: null
@@ -135,48 +129,48 @@ const EditProject = ({currentProjects, currentTasks, loadData}) => {
   };
 
   const handleCreatingProject = async () => {
-  // Calculate validation errors based on current values
-  const hasNameError = projectTitle.length === 0;
-  const hasDateError = projectDueDate === "";
-  const hasTaskError = tasks.length === 0;
-  
-  // Set error states
-  setProjectNameError(hasNameError);
-  setProjectDueDateError(hasDateError);
-  setTaskListError(hasTaskError);
-  
-  // Check if any errors exist
-  if (hasNameError || hasDateError || hasTaskError) {
-    return; // Stop execution if any errors
-  }
+    // Calculate validation errors based on current values
+    const hasNameError = projectTitle.length === 0;
+    const hasDateError = projectDueDate === "";
+    const hasTaskError = tasks.length === 0;
+    
+    // Set error states
+    setProjectNameError(hasNameError);
+    setProjectDueDateError(hasDateError);
+    setTaskListError(hasTaskError);
+    
+    // Check if any errors exist
+    if (hasNameError || hasDateError || hasTaskError) {
+      return; // Stop execution if any errors
+    }
 
-  try {
-    // Your project creation logic here...
-    const newProject = {
-      projectId: currentProjects.length === 1 ? 0 : currentProjects.length + 1,
-      name: projectTitle,
-      date: projectDueDate,
-      percentage: 0,
-      total: tasks.length,
-      remaining: tasks.length
-    };
-    
-    await addProject(newProject);
-    await addMultipleTasks(tasks.map(task => ({
-      ...task,
-      projectName: projectTitle,
-      projectId: newProject.projectId
-    })));
-    
-    loadData();
+    try {
+      // Your project creation logic here...
+      const newProject = {
+        projectId: currentProjects.length === 1 ? 0 : currentProjects.length + 1,
+        name: projectTitle,
+        date: projectDueDate,
+        percentage: 0,
+        total: tasks.length,
+        remaining: tasks.length
+      };
+      
+      await addProject(newProject);
+      await addMultipleTasks(tasks.map(task => ({
+        ...task,
+        projectName: projectTitle,
+        projectId: newProject.projectId
+      })));
+      
+      loadData();
 
-    navigate("/")
-    
-  } 
-  catch (error) {
-    console.error('Creation failed:', error);
-  }
-}; 
+      navigate("/")
+      
+    } 
+    catch (error) {
+      console.error('Creation failed:', error);
+    }
+  }; 
 
   const handleNewTaskToggle = () => {
 
@@ -193,13 +187,6 @@ const EditProject = ({currentProjects, currentTasks, loadData}) => {
     }
 
   }
-  
-  useEffect(() => {
-    console.log(tasks)
-    console.log("tasks length:", taskLength)
-    checkTaskDates()
-  }, [projectDueDate, tasks])
-
 
   return (
     <div  
@@ -391,30 +378,43 @@ const EditProject = ({currentProjects, currentTasks, loadData}) => {
         </div>
         {/*  */}
 
-        {/* add new task button and create project */}
+        {/* add new task button, create project and delete project */}
         <div
-          className='absolute bottom-0 p-5 left-0 flex flex-row items-center justify-end gap-2 w-full '
+          className='absolute bottom-0 p-5 left-0 flex flex-row items-center justify-between gap-2 w-full h-fit'
         >
+          {/* delete button */}
           <button
             onClick={() => handleNewTaskToggle()}
-            className={`bg-Pr rounded-full p-2.5 ${projectTitle !== "" && projectDueDate !== "" ? "block" : "hidden"}`}
+            className={`bg-rose-500 rounded-full p-2.5`}
           >    
             <svg  xmlns="http://www.w3.org/2000/svg" width="28" height="28"  
               fill="currentColor" viewBox="0 0 24 24" >
-              <path d="M3 13h8v8h2v-8h8v-2h-8V3h-2v8H3z"></path>
+              <path d="M17 6V4c0-1.1-.9-2-2-2H9c-1.1 0-2 .9-2 2v2H2v2h2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8h2V6zM9 4h6v2H9zM6 20V8h12v12z"></path><path d="M9 10h2v8H9zM13 10h2v8h-2z"></path>
             </svg>
           </button>
-          <button
-            onClick={() => handleCreatingProject()}
-            className={`bg-Pr rounded-full p-2.5  ${projectTitle !== "" && projectDueDate !== "" && tasks.length > 0 && !dateErrors ? "block" : "hidden"}`}
-          >    
-            <svg  xmlns="http://www.w3.org/2000/svg" width="28" height="28"  
-              fill="currentColor" viewBox="0 0 24 24" >
-              <path d="M9 15.59 4.71 11.3 3.3 12.71l5 5c.2.2.45.29.71.29s.51-.1.71-.29l11-11-1.41-1.41L9.02 15.59Z"></path>
-            </svg>
-          </button>
-        </div>
-
+          <div
+            className='flex flex-row items-center justify-start gap-2 '
+          >
+            <button
+              onClick={() => handleNewTaskToggle()}
+              className={`bg-Pr rounded-full p-2.5 ${projectTitle !== "" && projectDueDate !== "" ? "block" : "hidden"}`}
+            >    
+              <svg  xmlns="http://www.w3.org/2000/svg" width="28" height="28"  
+                fill="currentColor" viewBox="0 0 24 24" >
+                <path d="M3 13h8v8h2v-8h8v-2h-8V3h-2v8H3z"></path>
+              </svg>
+            </button>
+            <button
+              onClick={() => handleCreatingProject()}
+                className={`bg-Pr rounded-full p-2.5  ${projectTitle !== "" && projectDueDate !== "" && tasks.length > 0 && !dateErrors ? "block" : "hidden"}`}
+              >    
+                <svg  xmlns="http://www.w3.org/2000/svg" width="28" height="28"  
+                  fill="currentColor" viewBox="0 0 24 24" >
+                  <path d="M9 15.59 4.71 11.3 3.3 12.71l5 5c.2.2.45.29.71.29s.51-.1.71-.29l11-11-1.41-1.41L9.02 15.59Z"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
         </div>
 
       </div>
