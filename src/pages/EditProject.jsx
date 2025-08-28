@@ -1,8 +1,8 @@
 import React, {useState, useEffect} from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import NewTaskCard from '../components/Project/NewTaskCard'
 import ExistingProjectTaskCard from '../components/Project/ExistingProjectTaskCard'
-import { updateProject, updateTask } from '../database/tasksOperations'
+import { addTask, deleteTask, updateProject, updateTask } from '../database/tasksOperations'
 
 const EditProject = ({currentProjects, loadData}) => {
 
@@ -47,6 +47,7 @@ const EditProject = ({currentProjects, loadData}) => {
 
   // navigation
   const navigate = useNavigate()
+  const location = useLocation()
 
   // toggles
   const [isWarningBoxActive, setIsWarningBoxActive] = useState(false) // activates the warning dialogue box
@@ -60,41 +61,38 @@ const EditProject = ({currentProjects, loadData}) => {
   const [dateErrors, setDateErrors] = useState("")
 
   // project details
-  const [projectTitle, setProjectTitle] = useState(projectData.name)
-  const [projectDueDate, setProjectDueDate] = useState(projectData.date)
+  const {getTasks, getProject} = location.state || {}
+  const [projectId] = useState(getProject.projectId)
+  const [projectTitle, setProjectTitle] = useState(getProject.name || "")
+  const [projectDueDate, setProjectDueDate] = useState(getProject.date || "")
   
   // tasks details
-  const [tasks, setTasks] = useState(taskData)
+  const [tasks, setTasks] = useState(getTasks)
 
   // function to add tasks
-  const handleAddingTasks = (title, desc, date) => {
+  const handleAddingTasks = async (title, desc, date) => {
 
     const newTask = {
-      taskId: taskLength + 1,
+      taskId: Date.now(),
       title: title, 
       description: desc,
       date: date,
       completed: false,
-      projectId: currentProjects.length === 1 ? 0 : currentProjects.length + 1,
-      projectName: null
+      projectId: projectId,
+      projectName: projectTitle
     }
-    setTaskLength(taskLength + 1)
+    await addTask(newTask)
     setTasks([...tasks, newTask])
     setIsNewTaskActive(false)
   }
 
-  const handleDeletingTask = (id) => {
+  const handleDeletingTask = async (id) => {
+    await deleteTask(id)
     setTasks(tasks.filter(task => id !== task.taskId))
   }
 
-  // used for setting the formatted date
-  const handleFormatDate = (date) => {
-    const [year, month, day] = date.split("-");
-    return `${day}/${month}/${year}`
-  }
-
   // handles changing details of the tasks
-  const handleEditingTasks = (id, title, desc, date, projectId) => {
+  const handleEditingTasks = async (id, title, desc, date, projectId, completed, projectName) => {
 
     const editedTask = {
       taskId: id,
@@ -102,10 +100,11 @@ const EditProject = ({currentProjects, loadData}) => {
       description: desc,
       date: date,
       projectId: projectId,
-      completed: false,
-      projectName: null
+      completed: completed,
+      projectName: projectName
     }
 
+    await updateTask(editedTask)
     setTasks(tasks.map(task =>
       task.taskId === id ? {...editedTask} : task
     ))
@@ -128,49 +127,22 @@ const EditProject = ({currentProjects, loadData}) => {
   //   setDateErrors(hasInvalidDate);
   // };
 
-  const handleCreatingProject = async () => {
-    // Calculate validation errors based on current values
-    const hasNameError = projectTitle.length === 0;
-    const hasDateError = projectDueDate === "";
-    const hasTaskError = tasks.length === 0;
-    
-    // Set error states
-    setProjectNameError(hasNameError);
-    setProjectDueDateError(hasDateError);
-    setTaskListError(hasTaskError);
-    
-    // Check if any errors exist
-    if (hasNameError || hasDateError || hasTaskError) {
-      return; // Stop execution if any errors
+  const handleUpdatingProject = async () => {
+
+    const updatedProject = {
+      projectId: projectId,
+      name: projectTitle,
+      projectDate: projectDueDate,
+      percentage: getProject.percentage,
+      total: tasks.length,
+      remaining: getProject.remaining
     }
 
-    try {
-      // Your project creation logic here...
-      const newProject = {
-        projectId: currentProjects.length === 1 ? 0 : currentProjects.length + 1,
-        name: projectTitle,
-        date: projectDueDate,
-        percentage: 0,
-        total: tasks.length,
-        remaining: tasks.length
-      };
-      
-      await addProject(newProject);
-      await addMultipleTasks(tasks.map(task => ({
-        ...task,
-        projectName: projectTitle,
-        projectId: newProject.projectId
-      })));
-      
-      loadData();
+    await updateProject(updatedProject, projectId)
 
-      navigate("/")
-      
-    } 
-    catch (error) {
-      console.error('Creation failed:', error);
-    }
-  }; 
+    navigate(-1)
+
+  }
 
   const handleNewTaskToggle = () => {
 
@@ -294,7 +266,7 @@ const EditProject = ({currentProjects, loadData}) => {
               type="date" 
               value={projectDueDate}
               onChange={(e) => { setProjectDueDate(e.target.value)}}
-              className={`text-CText border-none bg-transparent font-semibold outline-none w-full`} 
+              className={`text-CText border-none bg-transparent font-semibold outline-none w-full pr-1`} 
               min={new Date().toISOString().split('T')[0]}
             />
 
@@ -405,7 +377,7 @@ const EditProject = ({currentProjects, loadData}) => {
               </svg>
             </button>
             <button
-              onClick={() => handleCreatingProject()}
+              onClick={() => handleUpdatingProject()}
                 className={`bg-Pr rounded-full p-2.5  ${projectTitle !== "" && projectDueDate !== "" && tasks.length > 0 && !dateErrors ? "block" : "hidden"}`}
               >    
                 <svg  xmlns="http://www.w3.org/2000/svg" width="28" height="28"  

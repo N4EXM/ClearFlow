@@ -27,7 +27,7 @@ export function getDateInDMY_Format(currentYear, currentMonth, currentDay) {
     month = month < 10 ? '0' + month : month;
 
     // Format the date as dd/mm/yyyy
-    return `${day}/${month}/${year}`;
+    return `${day}-${month}-${year}`;
 
 }
 

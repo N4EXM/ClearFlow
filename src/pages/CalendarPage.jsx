@@ -98,7 +98,7 @@ const CalendarPage = ({ loading, currentProjects, currentTasks, setCurrentTasks,
     if (!currentTasks || !Array.isArray(currentTasks)) return;
 
     const filteredTasks = currentTasks.filter(task => {
-      return task.formattedDate === dateString;
+      return task.date === dateString;
     });
 
     setTasksForSelectedDate(filteredTasks);
@@ -111,7 +111,6 @@ const CalendarPage = ({ loading, currentProjects, currentTasks, setCurrentTasks,
       title: title,
       description: description,
       date: getDateInYMD_Format(selectedYear, selectedMonthIndex, selectedDayOfMonth),
-      formattedDate: getDateInDMY_Format(selectedYear, selectedMonthIndex, selectedDayOfMonth),
       completed: false,
       projectId: null,
       projectName: null
@@ -130,13 +129,12 @@ const CalendarPage = ({ loading, currentProjects, currentTasks, setCurrentTasks,
   }
 
   // Handler for updating a task
-  const handleTaskUpdate = async (taskId, title, description, date, formattedDate, completed, projectId, projectName) => {
+  const handleTaskUpdate = async (taskId, title, description, date, completed, projectId, projectName) => {
     const updatedTask = {
       taskId: taskId,
       title: title,
       description: description,
       date: date,
-      formattedDate: formattedDate,
       completed: completed,
       projectId: projectId,
       projectName: projectName

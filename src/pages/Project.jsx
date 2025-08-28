@@ -22,6 +22,7 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
   const [dateErrors, setDateErrors] = useState("")
 
   // project details
+  const projectId = Date.now()
   const [projectTitle, setProjectTitle] = useState("")
   const [projectDueDate, setProjectDueDate] = useState("")
   
@@ -39,7 +40,7 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
       date: date,
       formattedDate: handleFormatDate(date),
       completed: false,
-      projectId: currentProjects.length === 1 ? 0 : currentProjects.length + 1,
+      projectId: projectId,
       projectName: null
     }
     setTaskLength(taskLength + 1)
@@ -113,7 +114,7 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
   try {
     // Your project creation logic here...
     const newProject = {
-      projectId: Date.now(),
+      projectId: projectId,
       name: projectTitle,
       date: projectDueDate,
       percentage: 0,

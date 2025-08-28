@@ -1,12 +1,32 @@
 import React from 'react'
 import CircularProgressBar from './CircularProgressBar'
+import { useNavigate } from 'react-router-dom'
+import { getTasksByProjectId, getProjectById } from '../../database/tasksOperations'
 
 
 const ProjectCard = ({name, date, id, percentage, total, remaining}) => {
 
+  // navigation
+  const navigate = useNavigate()
+
+  const handleNavigate = async () => {
+    
+    const getTasks = await getTasksByProjectId(id)
+    const getProject = await getProjectById(id)
+
+    navigate(`/EditProject/${id}`, {
+      state: {
+        getTasks,
+        getProject
+      }
+    })
+
+  }
+
   return (
     <div
-      className='bg-BG p-4 flex flex-row gap-3 rounded'
+      onClick={() => handleNavigate()}
+      className='bg-BG p-4 flex cursor-pointer flex-row gap-3 rounded'
     >
         <CircularProgressBar
           size={70}

@@ -47,15 +47,6 @@ function App() {
 
   }
 
-  const handleLoadProjectEditPage = async (projectId) => {
-
-    const project = await getProjectById(projectId)
-    const tasks = await getTasksByProjectId(projectId)
-
-
-
-  }
-
   return (
     <div
       className='relative '
@@ -103,7 +94,7 @@ function App() {
             }
           />
           <Route
-            path={'/EditProject'}
+            path={'/EditProject/:projectId'}
             element={
               loading
               ? <EditProject
