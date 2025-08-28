@@ -1,10 +1,10 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useMemo} from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import NewTaskCard from '../components/Project/NewTaskCard'
 import ExistingProjectTaskCard from '../components/Project/ExistingProjectTaskCard'
 import { addTask, deleteTask, updateProject, updateTask, updateProjectCompletion } from '../database/tasksOperations'
 
-const EditProject = ({currentProjects, loadData}) => {
+const EditProject = ({loadData}) => {
 
   // navigation
   const navigate = useNavigate()
@@ -30,7 +30,7 @@ const EditProject = ({currentProjects, loadData}) => {
 
   // tasks details
   const [tasks, setTasks] = useState(getTasks)
-  const [latestDate, setLatestDate] = useState()
+  const [latestDate, setLatestDate] = useState(null)
 
   // function to add tasks
   const handleAddingTasks = async (title, desc, date) => {
@@ -47,6 +47,7 @@ const EditProject = ({currentProjects, loadData}) => {
     await addTask(newTask)
     setTasks([...tasks, newTask])
     setIsNewTaskActive(false)
+    loadData()
   }
 
   const handleDeletingTask = async (id) => {
@@ -114,37 +115,22 @@ const EditProject = ({currentProjects, loadData}) => {
   }
 
   // get the lastest task date
-  const getLatestTaskDateFromArray = (tasksArray, format = false) => {
-    if (!tasksArray || tasksArray.length === 0) return null;
-  
-      const latestTimestamp = Math.max(...tasksArray.map(task => 
-      new Date(task.date).getTime()
-    ));
-  
-    const latestDate = new Date(latestTimestamp);
-  
-    return format ? latestDate.toISOString().split('T')[0] : latestDate;
-  };
+  const newlatestDate = useMemo(() => {
+    if (!tasks || tasks.length === 0) return null;
+    
+    return tasks.reduce((latest, task) => 
+      task.date > latest ? task.date : latest
+    , '');
+  }, [tasks]);
 
   useEffect(() => {
-    setProjectCompletetionData(updateProjectCompletion(projectId))
-
-    if (tasks.length > 0) {
-      const latest = getLatestTaskDateFromArray(tasks, true);
-      setLatestDate(latest);
-    } else {
-      setLatestDate(null);
-    }
-
-  }, [tasks])
+    setProjectCompletetionData(updateProjectCompletion(projectId));
+    setLatestDate(newlatestDate);
+  }, [tasks]);
 
   useEffect(() => {
-    if (tasks.length > 0) {
-      setLatestDate(getLatestTaskDateFromArray())
-    }
     console.log(latestDate)
-    console.log(tasks)
-  }, [])
+  }, [latestDate])
 
   return (
     <div  
@@ -152,7 +138,7 @@ const EditProject = ({currentProjects, loadData}) => {
     >
       {/* alert box */}
       <div
-        className={`${isWarningBoxActive ? "flex" : "hidden"} flex-col gap-5 p-3 pt-4 bg-BGS rounded-md border border-Pr absolute top-1/2 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 w-3/4 min-h-1/5 h-fit opacity-100 duration-300`}
+        className={`${isWarningBoxActive ? "flex" : "hidden"} flex-col gap-5 p-3 pt-4 bg-BGS rounded-md border border-Pr absolute top-1/2 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 w-3/4 min-h-40 h-fit opacity-100 duration-300 max-h-56`}
       >
         <div
           className='flex flex-col gap-3 items-center'
