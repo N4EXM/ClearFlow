@@ -2,48 +2,9 @@ import React, {useState, useEffect} from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import NewTaskCard from '../components/Project/NewTaskCard'
 import ExistingProjectTaskCard from '../components/Project/ExistingProjectTaskCard'
-import { addTask, deleteTask, updateProject, updateTask } from '../database/tasksOperations'
+import { addTask, deleteTask, updateProject, updateTask, updateProjectCompletion } from '../database/tasksOperations'
 
 const EditProject = ({currentProjects, loadData}) => {
-
-  // fake data
-  const projectData = {
-    projectId: 162663626,
-    name: "Note App",
-    date: "2025-09-10",
-    percentage: 25,
-    total: 4,
-    remaining: 6
-  }
-  const taskData = [
-    {
-      taskId: 1384726272,
-      title: "Create the sidebar",
-      description: "create a sidebar that is functional and shows current notes",
-      date: "2025-08-27",
-      completed: false,
-      projectId: 1,
-      projectName: "Note App"
-    },
-    {
-      taskId: 12383723224,
-      title: "Create the Task Card",
-      description: "make a card that shows the title, description and date of the current note",
-      date: "2025-08-30",
-      completed: false,
-      projectId: 1,
-      projectName: "Note App"
-    },
-    {
-      taskId: 45543224221,
-      title: "Create a editor",
-      description: "make an editor that allows the user creates a note, and edit a task",
-      date: "2025-08-29",
-      completed: false,
-      projectId: 1,
-      projectName: "Note App"
-    }
-  ]
 
   // navigation
   const navigate = useNavigate()
@@ -65,9 +26,11 @@ const EditProject = ({currentProjects, loadData}) => {
   const [projectId] = useState(getProject.projectId)
   const [projectTitle, setProjectTitle] = useState(getProject.name || "")
   const [projectDueDate, setProjectDueDate] = useState(getProject.date || "")
-  
+  const [projectCompletetionData, setProjectCompletetionData] = useState(updateProjectCompletion(projectId)) 
+
   // tasks details
   const [tasks, setTasks] = useState(getTasks)
+  const [latestDate, setLatestDate] = useState()
 
   // function to add tasks
   const handleAddingTasks = async (title, desc, date) => {
@@ -92,40 +55,21 @@ const EditProject = ({currentProjects, loadData}) => {
   }
 
   // handles changing details of the tasks
-  const handleEditingTasks = async (id, title, desc, date, projectId, completed, projectName) => {
-
-    const editedTask = {
-      taskId: id,
+   const handleTaskUpdate = async (taskId, title, description, date, completed, projectId, projectName) => {
+    const updatedTask = {
+      taskId: taskId,
       title: title,
-      description: desc,
+      description: description,
       date: date,
-      projectId: projectId,
       completed: completed,
+      projectId: projectId,
       projectName: projectName
     }
 
-    await updateTask(editedTask)
-    setTasks(tasks.map(task =>
-      task.taskId === id ? {...editedTask} : task
-    ))
-
+    await updateTask(taskId, updatedTask)
+    setTasks(prevTasks => prevTasks.map(task => task.taskId === updatedTask.taskId ? updatedTask : task))
+    loadData()
   }
-
-  // const checkTaskDates = () => {
-  //   const projectDate = new Date(projectDueDate);
-  //   const today = new Date();
-  //   today.setHours(0, 0, 0, 0); // Reset time for accurate comparison
-
-  //   // Check if ANY task has an invalid date
-  //   const hasInvalidDate = tasks.some(task => {
-  //     const taskDate = new Date(task.date);
-  //     taskDate.setHours(0, 0, 0, 0); // Reset time
-    
-  //     return taskDate > projectDate || taskDate < today;
-  //   });
-
-  //   setDateErrors(hasInvalidDate);
-  // };
 
   const handleUpdatingProject = async () => {
 
@@ -133,12 +77,12 @@ const EditProject = ({currentProjects, loadData}) => {
       projectId: projectId,
       name: projectTitle,
       projectDate: projectDueDate,
-      percentage: getProject.percentage,
+      percentage: projectCompletetionData.percentage,
       total: tasks.length,
-      remaining: getProject.remaining
+      remaining: projectCompletetionData.remaining
     }
 
-    await updateProject(updatedProject, projectId)
+    await updateProject(projectId, updatedProject)
 
     navigate(-1)
 
@@ -159,6 +103,48 @@ const EditProject = ({currentProjects, loadData}) => {
     }
 
   }
+
+  // handle exiting the page
+  const handleExit = () => {
+
+    loadData()
+
+    navigate(-1)
+
+  }
+
+  // get the lastest task date
+  const getLatestTaskDateFromArray = (tasksArray, format = false) => {
+    if (!tasksArray || tasksArray.length === 0) return null;
+  
+      const latestTimestamp = Math.max(...tasksArray.map(task => 
+      new Date(task.date).getTime()
+    ));
+  
+    const latestDate = new Date(latestTimestamp);
+  
+    return format ? latestDate.toISOString().split('T')[0] : latestDate;
+  };
+
+  useEffect(() => {
+    setProjectCompletetionData(updateProjectCompletion(projectId))
+
+    if (tasks.length > 0) {
+      const latest = getLatestTaskDateFromArray(tasks, true);
+      setLatestDate(latest);
+    } else {
+      setLatestDate(null);
+    }
+
+  }, [tasks])
+
+  useEffect(() => {
+    if (tasks.length > 0) {
+      setLatestDate(getLatestTaskDateFromArray())
+    }
+    console.log(latestDate)
+    console.log(tasks)
+  }, [])
 
   return (
     <div  
@@ -200,7 +186,7 @@ const EditProject = ({currentProjects, loadData}) => {
             Cancel
           </button>
           <button
-            onClick={() => navigate(-1)}
+            onClick={() => handleExit()}
             className='w-1/2 p-2 border bg-rose-500 border-rose-500 rounded-md text-sm font-medium'
           >
             Exit
@@ -314,7 +300,7 @@ const EditProject = ({currentProjects, loadData}) => {
                         completed={task.completed}
                         projectId={task.projectId}
                         maxDate={projectDueDate}
-                        updateFunction={handleEditingTasks}
+                        updateFunction={handleTaskUpdate}
                         deleteFunction={() => handleDeletingTask(task.taskId)}
                       />
                     </div>
@@ -378,7 +364,7 @@ const EditProject = ({currentProjects, loadData}) => {
             </button>
             <button
               onClick={() => handleUpdatingProject()}
-                className={`bg-Pr rounded-full p-2.5  ${projectTitle !== "" && projectDueDate !== "" && tasks.length > 0 && !dateErrors ? "block" : "hidden"}`}
+                className={`bg-Pr rounded-full p-2.5  ${projectTitle !== "" && projectDueDate !== "" && tasks.length > 0 && !dateErrors && (projectDueDate > latestDate) ? "block" : "hidden"}`}
               >    
                 <svg  xmlns="http://www.w3.org/2000/svg" width="28" height="28"  
                   fill="currentColor" viewBox="0 0 24 24" >

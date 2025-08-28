@@ -43,7 +43,7 @@ export function getDateInYMD_Format(currentYear, currentMonth, currentDay) {
     month = month < 10 ? '0' + month : month;
 
     // Format the date as dd/mm/yyyy
-    return `${year}/${month}/${day}`;
+    return `${year}-${month}-${day}`;
 
 }
 

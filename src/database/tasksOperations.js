@@ -225,8 +225,6 @@ export async function updateProjectCompletion(projectId) {
     // Get all tasks for this project
     const tasks = await getTasksByProjectId(projectId);
     const project = await getProjectById(projectId)
-
-    console.log(project)
     
     // Calculate completion stats
     const totalTasks = tasks.length;
@@ -244,9 +242,7 @@ export async function updateProjectCompletion(projectId) {
       totalTasks: totalTasks,
       remaining: remainingTasks
     });
-    
-    console.log(`Project ${projectId} updated: ${percentage}% complete`);
-    
+        
     return { percentage, completedTasks, totalTasks, remainingTasks };
     
   } catch (error) {

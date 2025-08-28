@@ -187,7 +187,7 @@ const CalendarPage = ({ loading, currentProjects, currentTasks, setCurrentTasks,
   // Effect to load tasks when date changes
   useEffect(() => {
     if (selectedDayOfMonth) {
-      const formattedDate = getDateInDMY_Format(selectedYear, selectedMonthIndex, selectedDayOfMonth);
+      const formattedDate = getDateInYMD_Format(selectedYear, selectedMonthIndex, selectedDayOfMonth);
       loadTasksForSelectedDate(formattedDate);
     }
   }, [selectedDayOfMonth, selectedMonthIndex, selectedYear, currentTasks]);
@@ -290,7 +290,6 @@ const CalendarPage = ({ loading, currentProjects, currentTasks, setCurrentTasks,
                       title={task.title}
                       description={task.description}
                       date={task.date}
-                      formattedDate={task.formattedDate}
                       completed={task.completed}
                       projectId={task.projectId}
                       projectName={task.projectName}

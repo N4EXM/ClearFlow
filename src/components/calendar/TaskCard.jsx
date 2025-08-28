@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react'
 
 
-const TaskCard = ({id, title, description, date, formattedDate, completed, projectId, projectName, deleteFunction, updateFunction}) => {
+const TaskCard = ({id, title, description, date, completed, projectId, projectName, deleteFunction, updateFunction}) => {
 
     // toggles
     const [isCompleted, setIsCompleted] = useState(completed || false)
@@ -14,7 +14,7 @@ const TaskCard = ({id, title, description, date, formattedDate, completed, proje
 
     // toggles the completed status between off and on
     const handleToggle = async () => {   
-        updateFunction(id, newTitle, newDescription, date, formattedDate, !isCompleted, projectId, projectName)
+        updateFunction(id, newTitle, newDescription, date, !isCompleted, projectId, projectName)
         setIsCompleted(!isCompleted) 
     }
 
@@ -29,7 +29,7 @@ const TaskCard = ({id, title, description, date, formattedDate, completed, proje
     // handles updating the task
     const handleUpdate = async () => {
 
-        updateFunction(id, newTitle, newDescription, date, formattedDate, completed, projectId, projectName)
+        updateFunction(id, newTitle, newDescription, date, completed, projectId, projectName)
         setIsEdit(false)
 
     }
