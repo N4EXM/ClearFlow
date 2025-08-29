@@ -198,6 +198,7 @@ export async function updateProject(id, updates) {
 export async function deleteProject(id) {
     
     const db = await getDB()
+    deleteTasksByProjectId(id)
     return db.delete("projects", id)
 
 }
@@ -269,3 +270,27 @@ export async function updateProjectTasks(projectId, tasks) {
   
 
 } 
+
+export async function getTaskStatistics() {
+  try {
+    const db = await getDB();
+    const allTasks = await db.getAll('tasks');
+    
+    const totalTasks = allTasks.length;
+    const completedTasks = allTasks.filter(task => task.completed).length;
+    const remainingTasks = totalTasks - completedTasks;
+    const completionPercentage = totalTasks > 0 
+      ? Math.round((completedTasks / totalTasks) * 100) 
+      : 0;
+
+    return {
+      totalTasks,
+      completedTasks,
+      remainingTasks,
+      completionPercentage
+    };
+  } catch (error) {
+    console.error('Error getting task statistics:', error);
+    throw error;
+  }
+}

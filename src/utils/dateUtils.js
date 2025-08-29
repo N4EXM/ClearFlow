@@ -51,3 +51,20 @@ export function getCurrentDayInMonthIndex (year, month, day) {
     // return new Date(year, month, day).toLocaleDateString("en-GB", { weekday: "short" })
     return new Date(year, month, day).getDay()
 }   
+
+// utils/dateUtils.js - Add this function
+export function isDateTodayOrFuture(year, month, day) {
+  const today = new Date();
+  const todayYear = today.getFullYear();
+  const todayMonth = today.getMonth(); // 0-11
+  const todayDay = today.getDate();
+  
+  // Create date objects for comparison
+  const selectedDate = new Date(year, month, day);
+  selectedDate.setHours(0, 0, 0, 0); // Normalize time
+  
+  const currentDate = new Date(todayYear, todayMonth, todayDay);
+  currentDate.setHours(0, 0, 0, 0); // Normalize time
+  
+  return selectedDate >= currentDate;
+}

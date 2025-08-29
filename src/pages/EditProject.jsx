@@ -2,7 +2,7 @@ import React, {useState, useEffect, useMemo} from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import NewTaskCard from '../components/Project/NewTaskCard'
 import ExistingProjectTaskCard from '../components/Project/ExistingProjectTaskCard'
-import { addTask, deleteTask, updateProject, updateTask, updateProjectCompletion } from '../database/tasksOperations'
+import { addTask, deleteTask, updateProject, updateTask, updateProjectCompletion, deleteProject } from '../database/tasksOperations'
 
 const EditProject = ({loadData}) => {
 
@@ -13,6 +13,7 @@ const EditProject = ({loadData}) => {
   // toggles
   const [isWarningBoxActive, setIsWarningBoxActive] = useState(false) // activates the warning dialogue box
   const [isNewTaskActive, setIsNewTaskActive] = useState(false) // activates the new task card for the project
+  const [isDeleteBoxActive, setIsDeleteBoxActive] = useState(false) // activates the delete project warning box
 
   // errors
   const [projectNameError, setProjectNameError] = useState(false)
@@ -74,16 +75,19 @@ const EditProject = ({loadData}) => {
 
   const handleUpdatingProject = async () => {
 
+    const currentProjectDetails = updateProjectCompletion(projectId)
+
     const updatedProject = {
       projectId: projectId,
       name: projectTitle,
-      projectDate: projectDueDate,
-      percentage: projectCompletetionData.percentage,
+      date: projectDueDate,
+      percentage: currentProjectDetails.percentage,
       total: tasks.length,
-      remaining: projectCompletetionData.remaining
+      remaining: currentProjectDetails.remaining
     }
 
     await updateProject(projectId, updatedProject)
+    loadData()
 
     navigate(-1)
 
@@ -111,6 +115,20 @@ const EditProject = ({loadData}) => {
     loadData()
 
     navigate(-1)
+
+  }
+
+  // handle deleting project
+  const handleDeleteProject = async () => {
+    
+    try {
+      await deleteProject(projectId)
+      loadData()
+      navigate(-1)
+    }
+    catch (error) {
+      console.log(error)
+    }
 
   }
 
@@ -180,9 +198,53 @@ const EditProject = ({loadData}) => {
         </div>
       </div>
 
+      {/* alert deleting project box */}
+      <div
+        className={`${isDeleteBoxActive ? "flex" : "hidden"} flex-col gap-5 p-3 pt-4 bg-BGS rounded-md border border-Pr absolute top-1/2 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 w-3/4 min-h-40 h-fit opacity-100 duration-300 max-h-56`}
+      >
+        <div
+          className='flex flex-col gap-3 items-center'
+        >
+          <svg className='p-2 bg-Pr rounded-full' xmlns="http://www.w3.org/2000/svg" width="48" height="48"  
+            fill="currentColor" viewBox="0 0 24 24" >
+            <path d="M11 7h2v6h-2zM11 15h2v2h-2z"></path><path d="M12 22c5.51 0 10-4.49 10-10S17.51 2 12 2 2 6.49 2 12s4.49 10 10 10m0-18c4.41 0 8 3.59 8 8s-3.59 8-8 8-8-3.59-8-8 3.59-8 8-8"></path>
+          </svg>
+          <div
+            className='flex flex-col gap-1.5'
+          >
+            <p 
+              className='text-center text-base font-semibold'
+            >
+              Are you want to delete this project?
+            </p>
+            <p
+              className='text-center text-CText/60 text-xs'
+            >
+              All of you data will be lost
+            </p>
+          </div>
+        </div>
+        <div
+          className='flex flex-row items-center gap-2'
+        >
+          <button
+            onClick={() => setIsDeleteBoxActive(false)}
+            className='font-medium w-1/2 p-2 border border-Pr rounded-md text-sm bg-BG'
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() => handleDeleteProject()}
+            className='w-1/2 p-2 border bg-rose-500 border-rose-500 rounded-md text-sm font-medium'
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+
       {/* main container */}
       <div
-        className={`${isWarningBoxActive && "brightness-50"} flex flex-col bg-Pr min-h-screen h-full w-full  duration-200 relative `}
+        className={`${isWarningBoxActive || isDeleteBoxActive && "brightness-50"} flex flex-col bg-Pr min-h-screen h-full w-full  duration-200 relative `}
       >
 
         {/* exit button */}
@@ -237,7 +299,7 @@ const EditProject = ({loadData}) => {
             <input 
               type="date" 
               value={projectDueDate}
-              onChange={(e) => { setProjectDueDate(e.target.value)}}
+              onChange={(e) => setProjectDueDate(e.target.value)}
               className={`text-CText border-none bg-transparent font-semibold outline-none w-full pr-1`} 
               min={new Date().toISOString().split('T')[0]}
             />
@@ -282,8 +344,8 @@ const EditProject = ({loadData}) => {
                         title={task.title}
                         description={task.description}
                         date={task.date}
-                        formattedDate={task.formattedDate}
                         completed={task.completed}
+                        projectName={task.projectName}
                         projectId={task.projectId}
                         maxDate={projectDueDate}
                         updateFunction={handleTaskUpdate}
@@ -328,7 +390,7 @@ const EditProject = ({loadData}) => {
         >
           {/* delete button */}
           <button
-            onClick={() => handleNewTaskToggle()}
+            onClick={() => setIsDeleteBoxActive(true)}
             className={`bg-rose-500 rounded-full p-2.5`}
           >    
             <svg  xmlns="http://www.w3.org/2000/svg" width="28" height="28"  

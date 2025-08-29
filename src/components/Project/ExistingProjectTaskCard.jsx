@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react'
 
 
-const ExistingProjectTaskCard = ({id, title, description, date, formattedDate, completed, projectId, projectName, deleteFunction, updateFunction, maxDate}) => {
+const ExistingProjectTaskCard = ({id, title, description, date, completed, projectId, projectName, deleteFunction, updateFunction, maxDate}) => {
 
     // toggles
     const [isCompleted, setIsCompleted] = useState(completed || false)

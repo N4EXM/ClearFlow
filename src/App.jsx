@@ -17,7 +17,7 @@ import CalendarPage from './pages/CalendarPage'
 import Navbar from './components/Navbar'
 import { useNavigate } from 'react-router-dom'
 import { BrowserRouter, Routes, Route, Navigate  } from 'react-router-dom'
-import { getAllTasks, getAllProjects, getProjectById, getTasksByProjectId} from './database/tasksOperations'
+import { getAllTasks, getAllProjects, getTaskStatistics} from './database/tasksOperations'
 
 function App() {
 
@@ -27,13 +27,6 @@ function App() {
   // app data
   const [currentProjects, setCurrentProjects] = useState([])
   const [currentTasks, setCurrentTasks] = useState([])
-
-  // lets all the stuff load first
-  useEffect(() => {
-    setTimeout(() => {
-      setLoading(loadData())
-    }, 3000)
-  }, [])
 
   const loadData = async () => {
     
@@ -46,6 +39,13 @@ function App() {
     return true
 
   }
+
+  // lets all the stuff load first
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(loadData())
+    }, 3000)
+  }, [])
 
   return (
     <div
@@ -62,6 +62,7 @@ function App() {
                   loading={loading}
                   projects={currentProjects}
                   tasks={currentTasks}
+                  loadData={loadData}
                 /> 
               : <LoadingPage/>}
           />

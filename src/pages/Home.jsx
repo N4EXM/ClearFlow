@@ -1,11 +1,15 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import ProjectCard from '../components/home/ProjectCard'
 import UpcomingTask from '../components/home/UpcomingTask'
 import StatisticsCard from '../components/home/StatisticsCard'
-import { getTasksByProjectId } from '../database/tasksOperations'
+import { getTasksByProjectId, getTaskStatistics } from '../database/tasksOperations'
 
-const Home = ({loading, projects, tasks}) => {
-  
+const Home = ({loading, projects, tasks, statistics, loadData}) => {
+
+  // tasks details
+  const [tasksLength] = useState(tasks.length)
+
+
   return (
     <div
       className='flex flex-col gap-5 bg-BG min-h-screen h-full w-full text-CText duration-200 p-7 relative font-poppins pb-32'
@@ -26,30 +30,33 @@ const Home = ({loading, projects, tasks}) => {
           Current Projects
         </p>
 
-        {
-          projects.length > 0
-          ? projects.map((project, _) => (
-              <ProjectCard
-                key={project.projectId}
-                id={project.projectId}
-                name={project.name}
-                date={project.date}
-                percentage={project.percentage}
-                total={project.total}
-                remaining={project.remaining}
-              />              
-            ))
-          : <div
-              className='flex items-center justify-center w-full min-h-20'
-            >
-              <p
-                className='w-full h-full flex items-center justify-center text-sm font-medium text-DText'
+        <div
+          className='flex flex-col gap-3 overflow-y-scroll max-h-64 no-scrollbar'
+        >
+          {
+            projects.length > 0
+            ? projects.map((project, _) => (
+                <ProjectCard
+                  key={project.projectId}
+                  id={project.projectId}
+                  name={project.name}
+                  date={project.date}
+                  percentage={project.percentage}
+                  total={project.total}
+                  remaining={project.remaining}
+                />              
+              ))
+            : <div
+                className='flex items-center justify-center w-full min-h-20'
               >
-                No projects
-              </p>
-            </div>
-        }
-
+                <p
+                  className='w-full h-full flex items-center justify-center text-sm font-medium text-DText'
+                >
+                  No projects
+                </p>
+              </div>
+          }
+        </div>
       </div>
 
       {/* current tasks */}
@@ -63,29 +70,32 @@ const Home = ({loading, projects, tasks}) => {
           Current Tasks
         </p>
 
-        {
-          tasks.length > 0
-          ? tasks.map((task, _) => (
-              <UpcomingTask
-                key={task.taskId}
-                id={task.taskId}
-                title={task.title}
-                description={task.description}
-                date={task.date}
-              />              
-            ))
-          : <div
-              className='flex items-center justify-center w-full min-h-20'
-            >
-              <p
-                className='w-full h-full flex items-center justify-center text-sm font-medium text-DText'
+        <div
+          className='flex flex-col gap-3 overflow-y-scroll max-h-64 no-scrollbar'
+        >
+          {
+            tasks.length > 0
+            ? tasks.map((task, _) => (
+                <UpcomingTask
+                  key={task.taskId}
+                  id={task.taskId}
+                  title={task.title}
+                  description={task.description}
+                  date={task.date}
+                  projectId={task.projectId}
+                />              
+              ))
+            : <div
+                className='flex items-center justify-center w-full min-h-20'
               >
-                No Tasks
-              </p>
-            </div>
-        }
-        
-
+                <p
+                  className='w-full h-full flex items-center justify-center text-sm font-medium text-DText'
+                >
+                  No Tasks
+                </p>
+              </div>
+          }
+        </div>
       </div>
       <StatisticsCard
         title={"Remaining tasks"}
@@ -95,8 +105,8 @@ const Home = ({loading, projects, tasks}) => {
                 <path d="M19 3h-2c0-.55-.45-1-1-1H8c-.55 0-1 .45-1 1H5c-1.1 0-2 .9-2 2v15c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 17H5V5h2v2h10V5h2z"></path><path d="M11 14.09 8.71 11.8 7.3 13.21l3 3c.2.2.45.29.71.29s.51-.1.71-.29l5-5-1.41-1.41-4.29 4.29Z"></path>
               </svg>
         }
-        completed={20}
-        max={40}
+        tasksLength={tasksLength}
+
       />
 
     </div>

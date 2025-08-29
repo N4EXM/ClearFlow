@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react'
-
+import { useNavigate } from 'react-router-dom'
+import { getProjectById, getTasksByProjectId } from '../../database/tasksOperations'
 
 const TaskCard = ({id, title, description, date, completed, projectId, projectName, deleteFunction, updateFunction}) => {
 
@@ -11,6 +12,8 @@ const TaskCard = ({id, title, description, date, completed, projectId, projectNa
     const [newTitle, setNewTitle] = useState(title || "")
     const [newDescription, setNewDescription] = useState(description || "")
 
+    // navigate
+    const navigate = useNavigate()
 
     // toggles the completed status between off and on
     const handleToggle = async () => {   
@@ -43,9 +46,26 @@ const TaskCard = ({id, title, description, date, completed, projectId, projectNa
 
     }
 
+    const handleNavigate = async () => {
+      
+        if (projectId !== null) {
+            const getTasks = await getTasksByProjectId(projectId)
+            const getProject = await getProjectById(projectId)
+            console.log("this ran")
+
+            navigate(`/EditProject/${projectId}`, {
+                state: {
+                    getTasks,
+                    getProject
+                }
+            })
+        }
+        
+    }
+
   return (
     <div
-        className='w-full min-h-40 h-full bg-BGS rounded-md px-4 py-4 pt-3 flex flex-col justify-between'
+        className='w-full min-h-40 h-full bg-BGS rounded-md px-4 py-4 pt-3 flex flex-col justify-between relative'
     >
         {/* title and description inputs */}
         <div
@@ -69,6 +89,17 @@ const TaskCard = ({id, title, description, date, completed, projectId, projectNa
                 readOnly={!isEdit}
             ></textarea>
         </div>
+
+        {/* nav button */}
+        <button
+            className={`absolute top-1 right-1 p-2 ${projectId !== null ? "block" : "hidden"} text-DText`}
+            onClick={() => handleNavigate()}
+        >
+            <svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
+                fill="currentColor" viewBox="0 0 24 24" >
+                <path d="M6 13h6v4l6-5-6-5v4H6z"></path>
+            </svg>
+        </button>
 
         {/* project name and trash and toggle button */}
         <div

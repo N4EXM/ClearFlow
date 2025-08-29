@@ -1,11 +1,11 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, use } from 'react'
 import { 
   getCurrentMonth, 
   getCurrentDate, 
   getCurrentDayInMonthIndex, 
   getCurrentYear, 
   getDaysInMonth, 
-  getDateInDMY_Format, 
+  isDateTodayOrFuture,
   getDateInYMD_Format 
 } from '../utils/dateUtils'
 import CalendarBtn from '../components/calendar/CalendarBtn'
@@ -13,6 +13,7 @@ import NewCalendarTaskCard from '../components/calendar/NewCalendarTaskCard'
 import TaskCard from '../components/calendar/TaskCard'
 import { mockTasks } from '../data'
 import { addTask, deleteTask, updateTask } from '../database/tasksOperations'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 const CalendarPage = ({ loading, currentProjects, currentTasks, setCurrentTasks, loadData }) => {
   const [errorMessage, setErrorMessage] = useState("")
@@ -187,15 +188,15 @@ const CalendarPage = ({ loading, currentProjects, currentTasks, setCurrentTasks,
   // Effect to load tasks when date changes
   useEffect(() => {
     if (selectedDayOfMonth) {
-      const formattedDate = getDateInYMD_Format(selectedYear, selectedMonthIndex, selectedDayOfMonth);
-      loadTasksForSelectedDate(formattedDate);
+      const date = getDateInYMD_Format(selectedYear, selectedMonthIndex, selectedDayOfMonth);
+      loadTasksForSelectedDate(date);
     }
   }, [selectedDayOfMonth, selectedMonthIndex, selectedYear, currentTasks]);
 
-  // Effect to load initial data
   useEffect(() => {
-    loadData()
-    console.log(currentTasks)
+    console.log("seletedDayMonth", selectedDayOfMonth)
+    console.log("selectedMonthIndex", selectedMonthIndex)
+    console.log("selectedYear", selectedYear)
   }, [])
 
   return (
@@ -268,7 +269,11 @@ const CalendarPage = ({ loading, currentProjects, currentTasks, setCurrentTasks,
                 }
               </p>
             </div>
-            <button onClick={() => setIsNewTaskFormActive(true)}>
+            {/* add new task button */}
+            <button 
+              className={`${isDateTodayOrFuture(selectedYear, selectedMonthIndex, selectedDayOfMonth) ? "block" : "hidden"}`}
+              onClick={() => setIsNewTaskFormActive(true)}
+            >
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M3 13h8v8h2v-8h8v-2h-8V3h-2v8H3z"></path>
               </svg>

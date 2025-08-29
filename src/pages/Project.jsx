@@ -79,64 +79,49 @@ const Project = ({loading, currentTasks, currentProjects, loadData}) => {
 
   }
 
-  const checkTaskDates = () => {
-    const projectDate = new Date(projectDueDate);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Reset time for accurate comparison
-
-    // Check if ANY task has an invalid date
-    const hasInvalidDate = tasks.some(task => {
-      const taskDate = new Date(task.date);
-      taskDate.setHours(0, 0, 0, 0); // Reset time
-    
-      return taskDate > projectDate || taskDate < today;
-    });
-
-    setDateErrors(hasInvalidDate);
-  };
-
   const handleCreatingProject = async () => {
-  // Calculate validation errors based on current values
-  const hasNameError = projectTitle.length === 0;
-  const hasDateError = projectDueDate === "";
-  const hasTaskError = tasks.length === 0;
-  
-  // Set error states
-  setProjectNameError(hasNameError);
-  setProjectDueDateError(hasDateError);
-  setTaskListError(hasTaskError);
-  
-  // Check if any errors exist
-  if (hasNameError || hasDateError || hasTaskError) {
-    return; // Stop execution if any errors
-  }
+    // Calculate validation errors based on current values
+    const hasNameError = projectTitle.length === 0;
+    const hasDateError = projectDueDate === "";
+    const hasTaskError = tasks.length === 0;
+    
+    // Set error states
+    setProjectNameError(hasNameError);
+    setProjectDueDateError(hasDateError);
+    setTaskListError(hasTaskError);
+    
+    // Check if any errors exist
+    if (hasNameError || hasDateError || hasTaskError) {
+      return; // Stop execution if any errors
+    }
 
-  try {
-    // Your project creation logic here...
-    const newProject = {
-      projectId: projectId,
-      name: projectTitle,
-      date: projectDueDate,
-      percentage: 0,
-      total: tasks.length,
-      remaining: tasks.length
-    };
-    
-    await addProject(newProject);
-    await addMultipleTasks(tasks.map(task => ({
-      ...task,
-      projectName: projectTitle,
-      projectId: newProject.projectId
-    })));
-    
-    loadData();
+    try {
+      // Your project creation logic here...
+      const newProject = {
+        projectId: projectId,
+        name: projectTitle,
+        date: projectDueDate,
+        percentage: 0,
+        total: tasks.length,
+        remaining: tasks.length
+      };
+      
+      await addProject(newProject);
+      await addMultipleTasks(tasks.map(task => ({
+        ...task,
+        projectName: projectTitle,
+        projectId: newProject.projectId
+      })));
+      
+      loadData();
 
-    navigate("/")
+      navigate("/")
     
-  } catch (error) {
-    console.error('Creation failed:', error);
-  }
-}; 
+    } 
+    catch (error) {
+      console.error('Creation failed:', error);
+    }
+  }; 
 
   const handleNewTaskToggle = () => {
 
